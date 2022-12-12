@@ -2,29 +2,28 @@
 <script type="module" src="popup.js"></script>
 
 <div class="container">
-  <div>
     <div class="header"> 
-      <a class= "page-link" id = "home-link" href="./popup.html">home</a>
+      <a class= "page-link"  href="./popup.html">home</a>
       <div class = "spacer"></div>
-      <a class= "page-link active" id = "blacklist-link" href="./blacklistPage.html" >blacklist</a>
+      <a class="page-link" href="./tracker.html">tracker</a>
+      <a class= "page-link active" href="./blacklistPage.html" >blacklist</a>
     </div>
-
-    <label class="switch">
-      <input type="checkbox" id="checkbox">
-      <span class="slider round"></span>
-    </label>
-
-    <div class="title" id="title1">Your blacklisted sites</div>
-
+    <div>
+      <label class="switch">
+        <input type="checkbox" id="checkbox">
+        <span class="slider round"></span>
+      </label>
+  
+      <div class="title" id="title1">Your blacklisted sites</div>
+  
+      
+      enter a website you want to blacklist:
+      <input type="text" id="blacklistInput">
+      <br><br>
+      <input type="submit" value="Submit" id = "submit"/><br>
+      
+  
+      <div class="blsites" id="blsites"></div>
+    </div>
     
-    enter a website you want to blacklist:
-    <input type="text" id="blacklistInput">
-    <br><br>
-    <input type="submit" value="Submit" id = "submit"/><br>
-    
-
-    <div class="blsites" id="blsites"></div>
-
-    <div class="bookmarks" id="bookmarks"></div>
-  </div>
 </div>

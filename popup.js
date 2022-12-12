@@ -151,7 +151,9 @@ function addOldBlacklistedSite (url) {
 
 //new link submitted
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("submit").onclick = formdata;
+    if (document.getElementById("submit") != null){
+        document.getElementById("submit").onclick = formdata;
+    }
 });
 
 function formdata() {

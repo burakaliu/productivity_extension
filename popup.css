@@ -1,12 +1,14 @@
 a:visited, a:link{
   text-decoration: none;
+  color: #00254d;
 }
 
 .container {
-    width: 280px;
+    width: 500px;
     color: #314d3e;
     margin: 10px;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 3px;
   }
 
@@ -18,7 +20,8 @@ a:visited, a:link{
   font-weight: bold;
   padding: 20px;  
   display: flex;
-  margin: auto;
+  gap: 10px;
+  flex-basis: 100%;
 }
 
 .page-link{
@@ -40,32 +43,11 @@ a:visited, a:link{
 }
 
 .page-link:hover{
-  font-size: 20px;
-  font-weight: lighter;
-  margin: auto;
-  border-radius: 5px;
-  border-width: 10px;
-  border:#00254d;
-  background-color: #c7bbac;
-  padding: 5px;
+  font-size: 21px;
 }
 
 .active{ /*the page that is active gets this link color*/
   color: #66afe9;
-}
-
-.home-link{
-  grid-column: 4;
-  grid-row: 1;
-}
-
-.blacklisted{
-  display: block;
-}
-
-.blacklist-link{
-  grid-column: 1;
-  grid-row: 1;
 }
 
 .blsite-controls {
@@ -123,6 +105,7 @@ a:visited, a:link{
   display: inline-block;
   width: 60px;
   height: 34px;
+  margin: 10px;
 }
 
 /* Hide default HTML checkbox */
