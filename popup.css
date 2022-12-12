@@ -1,3 +1,7 @@
+a:visited, a:link{
+  text-decoration: none;
+}
+
 .container {
     width: 280px;
     color: #314d3e;
@@ -13,7 +17,7 @@
   font-size: 30px;
   font-weight: bold;
   padding: 20px;  
-  display: block;
+  display: flex;
   margin: auto;
 }
 
@@ -27,6 +31,12 @@
   border:#00254d;
   background-color: #e3d6c5;
   padding: 5px;
+  max-width: fit-content;
+  flex: 1;
+}
+
+.spacer{
+  flex: 2;
 }
 
 .page-link:hover{
@@ -40,7 +50,7 @@
   padding: 5px;
 }
 
-.active{
+.active{ /*the page that is active gets this link color*/
   color: #66afe9;
 }
 
