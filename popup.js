@@ -59,6 +59,7 @@ async function addNewBlacklistedSite (url) {
 
         deleteIMG.src = "assets/delete.png";
         deleteIMG.title = "delete";
+        deleteIMG.className = "blsite-delete";
         deleteIMG.height = 20;
         deleteIMG.width = 20;
         deleteIMG.addEventListener("click", ()=> {
@@ -119,6 +120,7 @@ function addOldBlacklistedSite (url) {
 
         deleteIMG.src = "assets/delete.png";
         deleteIMG.title = "delete";
+        deleteIMG.className = "blsite-delete";
         deleteIMG.height = 20;
         deleteIMG.width = 20;
         deleteIMG.addEventListener("click", ()=> {
