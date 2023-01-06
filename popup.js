@@ -159,11 +159,20 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function formdata() {
-    var siteURL = document.getElementById("blacklistInput").value;
-    //console.log(document.getElementById("blacklistInput").value);
+    
+    // use `url` here inside the callback because it's asynchronous!
+    console.log(getCurrentTab());
+    var siteURL = getCurrentTab();
+    console.log(siteUrl);
     addNewBlacklistedSite(siteURL);
     document.getElementById("blacklistInput").value = "";
+    
+    
+    //var siteURL = document.getElementById("blacklistInput").value;
+    //console.log(document.getElementById("blacklistInput").value);
+    
 }
+
 
 
 

@@ -86,6 +86,9 @@ a:visited, a:link{
 .blacklisted{
   display: flex;
   flex-direction: row;
+  font-size: 15px;
+  text-align: center;
+  margin: auto;
 }
 
 .blsite-delete {
