@@ -2,7 +2,7 @@
     "name": "test extension uh oh stinky",
     "version": "0.0.2",
     "description": "Saving timestamps in YT videos and trying out other stuff",
-    "permissions": ["storage", "tabs"],
+    "permissions": ["storage", "tabs", "activeTab"],
     "host_permissions": ["https://*/*"],
     "background": {
       "service_worker": "background.js"

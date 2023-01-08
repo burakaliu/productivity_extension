@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName } from "./utils.js";
+import { getCurrentTab, getName, getTabUrl } from "./utils.js";
 let blacklist = []; 
 //"https://monkeytype.com/", "https://www.youtube.com/"
 
@@ -156,18 +156,27 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("submit") != null){
         document.getElementById("submit").onclick = formdata;
     }
+    if (document.getElementById("blsiteadder") != null){
+        document.getElementById("blsiteadder").onclick = formdata;
+    }
 });
 
 function formdata() {
     
     // use `url` here inside the callback because it's asynchronous!
-    console.log(getCurrentTab());
-    var siteURL = getCurrentTab();
-    console.log(siteUrl);
-    addNewBlacklistedSite(siteURL);
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        let url = tabs[0].url;
+        console.log(url);
+        addNewBlacklistedSite(url);
+        document.getElementById("blacklistInput").value = "";
+        // use `url` here inside the callback because it's asynchronous!
+        
+    });
+    /*
+    console.log(getTabUrl());
+    addNewBlacklistedSite(getTabUrl());
     document.getElementById("blacklistInput").value = "";
-    
-    
+    */
     //var siteURL = document.getElementById("blacklistInput").value;
     //console.log(document.getElementById("blacklistInput").value);
     
