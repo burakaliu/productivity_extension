@@ -1,4 +1,50 @@
 //dormant until an event the file is listening for fires, react with specified instructions, then unload.
+// background.js
+
+// keep track of the active tab
+let activeTabId = null;
+
+// when the user switches to a new tab, update the record for the previous tab
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  if (activeTabId !== null) {
+    updateTimeSpent(activeTabId);
+  }
+  activeTabId = activeInfo.tabId;
+});
+
+// when the user closes a tab, update the record for that tab
+chrome.tabs.onRemoved.addListener(function(tabId) {
+  if (activeTabId === tabId) {
+    activeTabId = null;
+  } else {
+    updateTimeSpent(tabId);
+  }
+});
+
+// update the time spent on a tab
+function updateTimeSpent(tabId) {
+  // get the current time
+  const currentTime = Date.now();
+
+  // get the tab record from storage
+  chrome.storage.local.get([tabId], function(result) {
+    let tabRecord = result[tabId];
+    if (tabRecord === undefined) {
+      tabRecord = {};
+    }
+
+    // if the tab has a start time, calculate the time spent
+    if (tabRecord.hasOwnProperty("startTime")) {
+      const timeSpent = currentTime - tabRecord.startTime;
+      tabRecord.timeSpent = (tabRecord.timeSpent || 0) + timeSpent;
+      delete tabRecord.startTime;
+    }
+
+    // save the updated tab record to storage
+    chrome.storage.local.set({[tabId]: tabRecord});
+  });
+}
+
 
 chrome.tabs.onUpdated.addListener((tabId, tab) => {
     /*

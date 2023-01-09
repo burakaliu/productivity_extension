@@ -182,6 +182,39 @@ function formdata() {
     
 }
 
+// index.js
+
+// get the tabs table from the HTML file
+const tabsTable = document.getElementById("tabs");
+
+// get all of the tab records from storage
+chrome.storage.local.get(null, function(result) {
+  // sort the tab records by time spent
+  const sortedTabRecords = Object.values(result).sort(function(a, b) {
+    return (b.timeSpent || 0) - (a.timeSpent || 0);
+  });
+
+  // create a row in the table for each tab
+  for (const tabRecord of sortedTabRecords) {
+    const row = document.createElement("tr");
+
+    const urlCell = document.createElement("td");
+    urlCell.textContent = tabRecord.url;
+    row.appendChild(urlCell);
+
+    const titleCell = document.createElement("td");
+    titleCell.textContent = tabRecord.title;
+    row.appendChild(titleCell);
+
+    const timeSpentCell = document.createElement("td");
+    timeSpentCell.textContent = tabRecord.timeSpent;
+    row.appendChild(timeSpentCell);
+
+    tabsTable.appendChild(row);
+  }
+});
+
+
 
 
 
