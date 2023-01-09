@@ -7,7 +7,7 @@ let blacklist = [];
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
     //console.log(result.onoff);
-    result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
+    //result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
 });
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
@@ -25,20 +25,22 @@ chrome.storage.local.get(["list"], (result) => {
         }
     }
 });
+if (document.getElementById("checkbox") != null){
+    /* change the on/off status of the blacklisting program in the chrome storage*/
+    document.getElementById("checkbox").addEventListener("click", ()=>{
+        //console.log("clicked on slider");
+        if (document.getElementById("checkbox").checked) {
+            chrome.storage.local.set({"onoff": "on"}, function(){
+                //console.log("tab blocker is now on");
+            });
+        } else {
+            chrome.storage.local.set({"onoff": "off"}, function(){
+                //console.log("tab blocker is now off");
+            });
+        }
+    });
+}
 
-/* change the on/off status of the blacklisting program in the chrome storage*/
-document.getElementById("checkbox").addEventListener("click", ()=>{
-    //console.log("clicked on slider");
-    if (document.getElementById("checkbox").checked) {
-        chrome.storage.local.set({"onoff": "on"}, function(){
-            //console.log("tab blocker is now on");
-        });
-    } else {
-        chrome.storage.local.set({"onoff": "off"}, function(){
-            //console.log("tab blocker is now off");
-        });
-    }
-});
 
 
 async function addNewBlacklistedSite (url) {
@@ -159,6 +161,41 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     }
+
+    
+    // index.js
+    console.log("this is running");
+
+    // get the tabs table from the HTML file
+    const tabsTable = document.getElementById("tabs");
+
+    // get all of the tab records from storage
+    chrome.storage.local.get(null, function(result) {
+        console.log(result);
+        // sort the tab records by time spent
+        const sortedTabRecords = Object.values(result).sort(function(a, b) {
+          return (b.timeSpent || 0) - (a.timeSpent || 0);
+        });
+      
+        // create a row in the table for each tab
+        for (const tabRecord of sortedTabRecords) {
+          const row = document.createElement("tr");
+      
+          const urlCell = document.createElement("td");
+          urlCell.textContent = tabRecord.url;
+          row.appendChild(urlCell);
+      
+          const titleCell = document.createElement("td");
+          titleCell.textContent = tabRecord.title;
+          row.appendChild(titleCell);
+      
+          const timeSpentCell = document.createElement("td");
+          timeSpentCell.textContent = tabRecord.timeSpent;
+          row.appendChild(timeSpentCell);
+      
+          tabsTable.appendChild(row);
+        }
+      });
 });
 
 function formdata() {
@@ -182,37 +219,7 @@ function formdata() {
     
 }
 
-// index.js
 
-// get the tabs table from the HTML file
-const tabsTable = document.getElementById("tabs");
-
-// get all of the tab records from storage
-chrome.storage.local.get(null, function(result) {
-  // sort the tab records by time spent
-  const sortedTabRecords = Object.values(result).sort(function(a, b) {
-    return (b.timeSpent || 0) - (a.timeSpent || 0);
-  });
-
-  // create a row in the table for each tab
-  for (const tabRecord of sortedTabRecords) {
-    const row = document.createElement("tr");
-
-    const urlCell = document.createElement("td");
-    urlCell.textContent = tabRecord.url;
-    row.appendChild(urlCell);
-
-    const titleCell = document.createElement("td");
-    titleCell.textContent = tabRecord.title;
-    row.appendChild(titleCell);
-
-    const timeSpentCell = document.createElement("td");
-    timeSpentCell.textContent = tabRecord.timeSpent;
-    row.appendChild(timeSpentCell);
-
-    tabsTable.appendChild(row);
-  }
-});
 
 
 
