@@ -6,13 +6,14 @@ let activeTabId = null;
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   try {
-    console.log("active tab changed to " + activeInfo + "");
     console.log("active tab changed to " + activeInfo.tabId + "");
     // how to fetch tab url using activeInfo.tabid
     chrome.tabs.get(activeInfo.tabId, function(tab){
         console.log(tab.url);
     });
     if (activeTabId !== null) {
+      console.log(activeTabId);
+      console.log(activeInfo.tabId);
       updateTimeSpent(activeTabId);
     }
     activeTabId = activeInfo.tabId;
