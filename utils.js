@@ -18,3 +18,30 @@ export const getName = (link) => {
     a = a.substring(0, a.indexOf("/"));
     return a;
 }
+export const getHomeURL = (url) => {
+    var parser = document.createElement('a');
+    parser.href = url;
+    return parser.protocol + '//' + parser.hostname;
+}
+export const millisToMinutesAndSeconds = (millis) => {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return (
+        seconds == 60 ?
+        (minutes+1) + ":00" :
+        minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+      );
+}
+
+/* USE THIS TO CLEAR STORAGE */
+export const clearStorage = () => {
+    chrome.storage.local.clear(function() {
+    var error = chrome.runtime.lastError;
+    if (error) {
+        console.error(error);
+    }
+    // do something more
+    });
+    chrome.storage.sync.clear(); // callback is optional
+}
+  

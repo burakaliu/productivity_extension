@@ -1,35 +1,49 @@
 //dormant until an event the file is listening for fires, react with specified instructions, then unload.
 // background.js
-// keep track of the active tab
-let activeTabId = null;
+
+
+/* USE THIS TO CLEAR STORAGE
+chrome.storage.local.clear(function() {
+  var error = chrome.runtime.lastError;
+  if (error) {
+      console.error(error);
+  }
+  // do something more
+});
+chrome.storage.sync.clear(); // callback is optional
+*/
+
+
+let activeTabUrl = null;
 
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   try {
     console.log("active tab changed to " + activeInfo.tabId + "");
-    // how to fetch tab url using activeInfo.tabid
     chrome.tabs.get(activeInfo.tabId, function(tab){
         console.log(tab.url);
+        if (activeTabUrl !== null) {
+          console.log(activeTabUrl);
+          console.log(tab.url);
+          updateTimeSpent(activeTabUrl);
+        }
+        activeTabUrl = tab.url;
+        updateStartTime(activeTabUrl);
     });
-    if (activeTabId !== null) {
-      console.log(activeTabId);
-      console.log(activeInfo.tabId);
-      updateTimeSpent(activeTabId);
-    }
-    activeTabId = activeInfo.tabId;
-    updateStartTime(activeTabId);
   } catch (error) {
     console.error(error);
   }
 });
 
 // when the user closes a tab, update the record for that tab
-chrome.tabs.onRemoved.addListener(function(tabId) {
+chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
     try {
-      updateTimeSpent(tabId);
-      if (activeTabId === tabId) {
-        activeTabId = null;
-      }
+      chrome.tabs.get(tabId, function(tab){
+        updateTimeSpent(tab.url);
+        if (activeTabUrl === tab.url) {
+          activeTabUrl = null;
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -39,9 +53,9 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 // when the user closes a window, update the record for the active tab
 chrome.windows.onRemoved.addListener(function() {
   try {
-    if (activeTabId !== null) {
-      updateTimeSpent(activeTabId);
-      activeTabId = null;
+    if (activeTabUrl !== null) {
+      updateTimeSpent(activeTabUrl);
+      activeTabUrl = null;
     }
   } catch (error) {
     console.error(error);
@@ -49,33 +63,40 @@ chrome.windows.onRemoved.addListener(function() {
 });
 
 // update the start time for a tab
-function updateStartTime(tabId) {
+function updateStartTime(tabUrl) {
   // get the current time
   const currentTime = Date.now();
 
+  //get tab origin
+  const url = new URL(tabUrl).origin;
+
   // get the tab record from storage
-  chrome.storage.local.get([tabId], function(result) {
-    let tabRecord = result[tabId];
+  chrome.storage.local.get([url], function(result) {
+    let tabRecord = result[url];
     if (tabRecord === undefined) {
       tabRecord = {};
     }
 
     // set the start time for the tab
     tabRecord.startTime = currentTime;
+    tabRecord.url = url;
 
     // save the updated tab record to storage
-    chrome.storage.local.set({[tabId]: tabRecord});
+    chrome.storage.local.set({[url]: tabRecord});
   });
 }
 
 // update the time spent on a tab
-function updateTimeSpent(tabId) {
+function updateTimeSpent(tabUrl) {
   // get the current time
   const currentTime = Date.now();
 
+  //get tab origin
+  const url = new URL(tabUrl).origin;
+
   // get the tab record from storage
-  chrome.storage.local.get([tabId], function(result) {
-    let tabRecord = result[tabId];
+  chrome.storage.local.get([url], function(result) {
+    let tabRecord = result[url];
     if (tabRecord === undefined) {
       tabRecord = {};
     }
@@ -88,7 +109,7 @@ function updateTimeSpent(tabId) {
     }
 
     // save the updated tab record to storage
-    chrome.storage.local.set({[tabId]: tabRecord});
+    chrome.storage.local.set({[url]: tabRecord});
   });
 }
 

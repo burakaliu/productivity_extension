@@ -179,21 +179,26 @@ document.addEventListener("DOMContentLoaded", function () {
       
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
-          const row = document.createElement("tr");
+            try {
+                const row = document.createElement("tr");
       
-          const urlCell = document.createElement("td");
-          urlCell.textContent = tabRecord.url;
-          row.appendChild(urlCell);
-      
-          const titleCell = document.createElement("td");
-          titleCell.textContent = tabRecord.title;
-          row.appendChild(titleCell);
-      
-          const timeSpentCell = document.createElement("td");
-          timeSpentCell.textContent = tabRecord.timeSpent;
-          row.appendChild(timeSpentCell);
-      
-          tabsTable.appendChild(row);
+                const urlCell = document.createElement("td");
+                console.log(tabRecord.url);
+                urlCell.textContent = new URL(tabRecord.url).origin;
+                row.appendChild(urlCell);
+            
+                const titleCell = document.createElement("td");
+                titleCell.textContent = tabRecord.title;
+                row.appendChild(titleCell);
+            
+                const timeSpentCell = document.createElement("td");
+                timeSpentCell.textContent = tabRecord.timeSpent/1000;
+                row.appendChild(timeSpentCell);
+            
+                tabsTable.appendChild(row);
+            } catch (error) {
+                console.log("empty tab");
+            }
         }
       });
 });
