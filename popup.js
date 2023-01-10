@@ -186,11 +186,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log(tabRecord.url);
                 urlCell.textContent = new URL(tabRecord.url).origin;
                 row.appendChild(urlCell);
-            
+                /*
                 const titleCell = document.createElement("td");
                 titleCell.textContent = tabRecord.title;
                 row.appendChild(titleCell);
-            
+                */
                 const timeSpentCell = document.createElement("td");
                 timeSpentCell.textContent = tabRecord.timeSpent/1000;
                 row.appendChild(timeSpentCell);
@@ -201,6 +201,50 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
       });
+
+      /* creat the pie chart */
+      // get the total time spent on all tabs
+        let totalTimeSpent = 0;
+        chrome.storage.local.get(null, function(result) {
+            for (const tabRecord of Object.values(result)) {
+                totalTimeSpent += (tabRecord.timeSpent || 0);
+        }
+
+        // create an array to hold the data for the pie chart
+        const chartData = [];
+
+        // get all of the tab records from storage
+        chrome.storage.local.get(null, function(result) {
+            for (const tabRecord of Object.values(result)) {
+                chartData.push({
+                label: new URL(tabRecord.url).origin,
+                data: tabRecord.timeSpent/1000,
+                backgroundColor: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
+                });
+            }
+
+            // create the pie chart
+            const ctx = document.getElementById("pieChart").getContext("2d");
+            new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: chartData.map(item => item.label),
+                datasets: [
+                {
+                    data: chartData.map(item => item.data),
+                    backgroundColor: chartData.map(item => item.backgroundColor),
+                },
+                ],
+            },
+            options: {
+                title: {
+                display: true,
+                text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
+                },
+            },
+            });
+        });
+    });
 });
 
 function formdata() {
