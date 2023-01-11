@@ -1,6 +1,7 @@
 //script for popup.html page
 
 import { getCurrentTab, getName, getTabUrl } from "./utils.js";
+//import Chart from 'chart.js/auto';
 let blacklist = []; 
 //"https://monkeytype.com/", "https://www.youtube.com/"
 

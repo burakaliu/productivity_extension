@@ -68,7 +68,7 @@ function updateStartTime(tabUrl) {
   const currentTime = Date.now();
 
   //get tab origin
-  const url = new URL(tabUrl).origin;
+  const url = new URL(tabUrl).hostname;
 
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
@@ -92,7 +92,7 @@ function updateTimeSpent(tabUrl) {
   const currentTime = Date.now();
 
   //get tab origin
-  const url = new URL(tabUrl).origin;
+  const url = new URL(tabUrl).hostname;
 
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
