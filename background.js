@@ -2,7 +2,7 @@
 // background.js
 
 
-/* USE THIS TO CLEAR STORAGE
+/* USE THIS TO CLEAR STORAGE 
 chrome.storage.local.clear(function() {
   var error = chrome.runtime.lastError;
   if (error) {
@@ -68,7 +68,7 @@ function updateStartTime(tabUrl) {
   const currentTime = Date.now();
 
   //get tab origin
-  const url = new URL(tabUrl).hostname;
+  const url = new URL(tabUrl).origin;
 
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
@@ -92,7 +92,7 @@ function updateTimeSpent(tabUrl) {
   const currentTime = Date.now();
 
   //get tab origin
-  const url = new URL(tabUrl).hostname;
+  const url = new URL(tabUrl).origin;
 
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {

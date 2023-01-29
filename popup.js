@@ -218,31 +218,36 @@ document.addEventListener("DOMContentLoaded", function () {
         chrome.storage.local.get(null, function(result) {
             for (const tabRecord of Object.values(result)) {
                 chartData.push({
-                label: new URL(tabRecord.url).origin,
-                data: tabRecord.timeSpent/1000,
-                backgroundColor: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
+                    label: new URL(tabRecord.url).hostname,
+                    data: tabRecord.timeSpent/1000,
+                    backgroundColor: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
+                    padding: 200,
                 });
             }
 
             // create the pie chart
             const ctx = document.getElementById("pieChart").getContext("2d");
             new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: chartData.map(item => item.label),
-                datasets: [
-                {
-                    data: chartData.map(item => item.data),
-                    backgroundColor: chartData.map(item => item.backgroundColor),
+                type: "pie",
+                data: {
+                    labels: chartData.map(item => item.label),
+                    datasets: [
+                    {
+                        data: chartData.map(item => item.data),
+                        backgroundColor: chartData.map(item => item.backgroundColor),
+                    },
+                    ],
                 },
-                ],
-            },
-            options: {
-                title: {
-                display: true,
-                text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
+                options: {
+                    title: {
+                        display: true,
+                        text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
+                    },
+                    legend: {
+                        position: 'border',
+                        padding: 20,
+                    },
                 },
-            },
             });
         });
     });
