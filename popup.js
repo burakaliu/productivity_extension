@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl } from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName} from "./utils.js";
 //import Chart from 'chart.js/auto';
 let blacklist = []; 
 //"https://monkeytype.com/", "https://www.youtube.com/"
@@ -205,52 +205,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
       /* creat the pie chart */
       // get the total time spent on all tabs
-        let totalTimeSpent = 0;
-        chrome.storage.local.get(null, function(result) {
-            for (const tabRecord of Object.values(result)) {
-                totalTimeSpent += (tabRecord.timeSpent || 0);
-        }
-
-        // create an array to hold the data for the pie chart
-        const chartData = [];
-
-        // get all of the tab records from storage
-        chrome.storage.local.get(null, function(result) {
-            for (const tabRecord of Object.values(result)) {
-                chartData.push({
-                    label: new URL(tabRecord.url).hostname,
-                    data: tabRecord.timeSpent/1000,
-                    backgroundColor: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
-                    padding: 200,
-                });
-            }
-
-            // create the pie chart
-            const ctx = document.getElementById("pieChart").getContext("2d");
-            new Chart(ctx, {
-                type: "pie",
-                data: {
-                    labels: chartData.map(item => item.label),
-                    datasets: [
-                    {
-                        data: chartData.map(item => item.data),
-                        backgroundColor: chartData.map(item => item.backgroundColor),
-                    },
-                    ],
-                },
-                options: {
-                    title: {
-                        display: true,
-                        text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
-                    },
-                    legend: {
-                        position: 'border',
-                        padding: 20,
-                    },
-                },
-            });
+        
+      chrome.storage.local.get(null, function(result) {
+        const chartData = Object.values(result).map(item => ({
+          label: getHostName(item.url),
+          data: item.timeSpent,
+          backgroundColor: randomColor(),
+        }));
+      
+        const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
+      
+        // create the pie chart
+        const ctx = document.getElementById("pieChart").getContext("2d");
+        new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: chartData.map(item => item.label),
+            datasets: [
+              {
+                data: chartData.map(item => item.data),
+                backgroundColor: chartData.map(item => item.backgroundColor),
+              },
+            ],
+          },
+          options: {
+            title: {
+              display: true,
+              text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
+            },
+            legend: {
+              position: 'border',
+              padding: 20,
+            },
+          },
         });
-    });
+      });
+      
+      function randomColor() {
+        return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+      }
+    
 });
 
 function formdata() {

@@ -12,12 +12,26 @@ export async function getTabUrl(){
     });
 }
 export const getName = (link) => {
+    if (!link) {
+        return '';
+    }
     let a = link.slice(8);
-    //condition ? if true do this : if false do this;
     a.includes("www") ? a = a.slice(4) : a;
     a = a.substring(0, a.indexOf("/"));
     return a;
 }
+export const getHostName = (url) => {
+    if (url.startsWith("chrome://")) {
+        return url;
+    }
+    let hostname = new URL(url).hostname;
+    if (hostname.startsWith("https://www.")) {
+      hostname = hostname.slice(12);
+    }
+    return hostname;
+  }
+  
+
 export const getHomeURL = (url) => {
     var parser = document.createElement('a');
     parser.href = url;
