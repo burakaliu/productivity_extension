@@ -7,8 +7,8 @@ let blacklist = [];
 
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
-    //console.log(result.onoff);
-    //result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
+    console.log(result.onoff);
+    result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
 });
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
