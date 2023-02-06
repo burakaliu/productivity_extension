@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName} from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL} from "./utils.js";
 //import Chart from 'chart.js/auto';
 let blacklist = []; 
 //"https://monkeytype.com/", "https://www.youtube.com/"
@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
       chrome.storage.local.get(null, function(result) {
         const chartData = Object.values(result).map(item => ({
-          label: getHostName(item.url),
+          label: extractNameFromURL(item.url),
           data: item.timeSpent,
           backgroundColor: randomColor(),
         }));

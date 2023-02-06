@@ -15,6 +15,7 @@ chrome.storage.sync.clear(); // callback is optional
 
 
 let activeTabUrl = null;
+let ignoredURLs = ["chrome://newtab", "chrome://extensions/", "chrome://settings/"];
 
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
@@ -64,6 +65,9 @@ chrome.windows.onRemoved.addListener(function() {
 
 // update the start time for a tab
 function updateStartTime(tabUrl) {
+  //if new tab is chrome://newtab, do nothing
+  if (tabUrl.includes(ignoredURLs)) return;
+
   // get the current time
   const currentTime = Date.now();
 
@@ -88,6 +92,9 @@ function updateStartTime(tabUrl) {
 
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
+  //if new tab is chrome://newtab, do nothing
+  if (tabUrl.includes(ignoredURLs)) return;
+  
   // get the current time
   const currentTime = Date.now();
 

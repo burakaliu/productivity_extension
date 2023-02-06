@@ -30,6 +30,12 @@ export const getHostName = (url) => {
     }
     return hostname;
   }
+  export const extractNameFromURL = (url) => {
+    const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
+    const match = urlRegex.exec(url);
+    return match ? match[1] : "";
+  }
+  
   
 
 export const getHomeURL = (url) => {
