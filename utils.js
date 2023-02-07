@@ -21,7 +21,8 @@ export const getName = (link) => {
     return a;
 }
 export const getHostName = (url) => {
-    if (url.startsWith("chrome://")) {
+    let newURL = new URL(url);
+    if (newURL.startsWith("chrome://")) {
         return url;
     }
     let hostname = new URL(url).hostname;
