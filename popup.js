@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL} from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseMillisecondsIntoReadableTime} from "./utils.js";
 //import Chart from 'chart.js/auto';
 let blacklist = []; 
 //"https://monkeytype.com/", "https://www.youtube.com/"
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.appendChild(titleCell);
                 */
                 const timeSpentCell = document.createElement("td");
-                timeSpentCell.textContent = tabRecord.timeSpent/1000;
+                timeSpentCell.textContent = parseMillisecondsIntoReadableTime(tabRecord.timeSpent);
                 row.appendChild(timeSpentCell);
             
                 tabsTable.appendChild(row);
@@ -207,9 +207,10 @@ document.addEventListener("DOMContentLoaded", function () {
       // get the total time spent on all tabs
         
       chrome.storage.local.get(null, function(result) {
-        const chartData = Object.values(result).map(item => ({
+        const chartData = Object.values(result).filter(item => item.timeSpent > 180000).map(item => ({
           label: extractNameFromURL(item.url),
           data: item.timeSpent,
+          readableTime: parseMillisecondsIntoReadableTime(item.timeSpent),
           backgroundColor: randomColor(),
         }));
       
@@ -220,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
         new Chart(ctx, {
           type: "pie",
           data: {
-            labels: chartData.map(item => item.label),
+            labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
             datasets: [
               {
                 data: chartData.map(item => item.data),
@@ -231,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
           options: {
             title: {
               display: true,
-              text: `Total Time Spent: ${totalTimeSpent/1000} sec`,
+              text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
             },
             legend: {
               position: 'border',
