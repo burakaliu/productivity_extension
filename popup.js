@@ -150,7 +150,11 @@ function addOldBlacklistedSite (url) {
         });
         
         newblsite.appendChild(deleteIMG);
-        document.getElementById("blsites").appendChild(newblsite);
+        try{
+            document.getElementById("blsites").appendChild(newblsite);
+        }catch{
+            console.log("error adding old blacklisted site");
+        }
     }  
 }
 
@@ -207,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // get the total time spent on all tabs
         
       chrome.storage.local.get(null, function(result) {
-        const chartData = Object.values(result).filter(item => item.timeSpent > 180000).map(item => ({
+        const chartData = Object.values(result).filter(item => item.timeSpent > 60000).map(item => ({
           label: extractNameFromURL(item.url),
           data: item.timeSpent,
           readableTime: parseMillisecondsIntoReadableTime(item.timeSpent),

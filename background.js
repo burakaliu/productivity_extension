@@ -1,8 +1,8 @@
 //dormant until an event the file is listening for fires, react with specified instructions, then unload.
 // background.js
 
-
-/* USE THIS TO CLEAR STORAGE 
+/*
+// USE THIS TO CLEAR STORAGE 
 chrome.storage.local.clear(function() {
   var error = chrome.runtime.lastError;
   if (error) {
