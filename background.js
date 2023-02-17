@@ -17,16 +17,22 @@ chrome.storage.sync.clear(); // callback is optional
 let activeTabUrl = null;
 let ignoredURLs = ["chrome://newtab", "chrome://extensions/", "chrome://settings/"];
 
+
+// USER SWITCH TAB UPDATE NOT WORKING
+
+// initialize the last active time
+let lastActiveTime = Date.now();
+
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   try {
     console.log("active tab changed to " + activeInfo.tabId + "");
-    chrome.tabs.get(activeInfo.tabId, function(tab){
+    chrome.tabs.get(activeInfo.tabId, async function(tab){
         console.log(tab.url);
         if (activeTabUrl !== null) {
           console.log(activeTabUrl);
           console.log(tab.url);
-          updateTimeSpent(activeTabUrl);
+          await updateTimeSpent(activeTabUrl);
         }
         activeTabUrl = tab.url;
         updateStartTime(activeTabUrl);
@@ -117,7 +123,7 @@ chrome.idle.queryState(60, function(state) {
     }
 
     // if the tab has a start time, calculate the time spent
-    if (tabRecord.hasOwnProperty("startTime")) {
+    if (tabRecord.hasOwnProperty("startTime") && lastActiveTime > (currentTime - 60 * 1000)) {
       const timeSpent = currentTime - tabRecord.startTime;
       tabRecord.timeSpent = (tabRecord.timeSpent || 0) + timeSpent;
       delete tabRecord.startTime;
