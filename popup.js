@@ -170,7 +170,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // index.js
     console.log("this is running");
-
     // get the tabs table from the HTML file
     const tabsTable = document.getElementById("tabs");
 
@@ -179,14 +178,14 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(result);
         // sort the tab records by time spent
         const sortedTabRecords = Object.values(result).sort(function(a, b) {
-          return (b.timeSpent || 0) - (a.timeSpent || 0);
+            return (b.timeSpent || 0) - (a.timeSpent || 0);
         });
-      
+    
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
             try {
                 const row = document.createElement("tr");
-      
+    
                 const urlCell = document.createElement("td");
                 console.log(tabRecord.url);
                 urlCell.textContent = new URL(tabRecord.url).origin;
@@ -205,47 +204,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("empty tab");
             }
         }
-      });
 
-      /* creat the pie chart */
-      // get the total time spent on all tabs
-        
-      chrome.storage.local.get(null, function(result) {
-        const chartData = Object.values(result).filter(item => item.timeSpent > 60000).map(item => ({
-          label: extractNameFromURL(item.url),
-          data: item.timeSpent,
-          readableTime: parseMillisecondsIntoReadableTime(item.timeSpent),
-          backgroundColor: randomColor(),
-        }));
-      
+        /* create the pie chart */
+        // get the total time spent on all tabs
+        const chartData = Object.values(result)
+            .filter(item => item.timeSpent > 60000)
+            .map(item => ({
+                label: extractNameFromURL(item.url),
+                data: item.timeSpent,
+                readableTime: parseMillisecondsIntoReadableTime(item.timeSpent),
+                backgroundColor: randomColor(),
+            }));
+
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
-      
+
         // create the pie chart
         const ctx = document.getElementById("pieChart").getContext("2d");
         new Chart(ctx, {
-          type: "pie",
-          data: {
-            labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
-            datasets: [
-              {
-                data: chartData.map(item => item.data),
-                backgroundColor: chartData.map(item => item.backgroundColor),
-              },
-            ],
-          },
-          options: {
-            title: {
-              display: true,
-              text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
+            type: "pie",
+            data: {
+                labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
+                datasets: [
+                    {
+                        data: chartData.map(item => item.data),
+                        backgroundColor: chartData.map(item => item.backgroundColor),
+                    },
+                ],
             },
-            legend: {
-              position: 'border',
-              padding: 20,
+            options: {
+                title: {
+                    display: true,
+                    text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
+                },
+                legend: {
+                    position: 'border',
+                    padding: 20,
+                },
             },
-          },
         });
-      });
-      
+    });
       function randomColor() {
         return `#${Math.floor(Math.random()*16777215).toString(16)}`;
       }
