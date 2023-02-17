@@ -17,9 +17,6 @@ chrome.storage.sync.clear(); // callback is optional
 let activeTabUrl = null;
 let ignoredURLs = ["chrome://newtab", "chrome://extensions/", "chrome://settings/"];
 
-
-// USER SWITCH TAB UPDATE NOT WORKING
-
 // initialize the last active time
 let lastActiveTime = Date.now();
 
@@ -71,13 +68,13 @@ chrome.windows.onRemoved.addListener(function() {
 
 // update the start time for a tab
 function updateStartTime(tabUrl) {
-  //if new tab is chrome://newtab, do nothing
+  // if new tab is chrome://newtab, do nothing
   if (tabUrl.includes(ignoredURLs)) return;
 
   // get the current time
   const currentTime = Date.now();
 
-  //get tab origin
+  // get tab origin
   const url = new URL(tabUrl).origin;
 
   // get the tab record from storage
@@ -87,52 +84,62 @@ function updateStartTime(tabUrl) {
       tabRecord = {};
     }
 
-   // set the start time for the tab if the user is not idle
-   if (lastActiveTime > (currentTime - 60 * 1000)) {
-    tabRecord.startTime = currentTime;
-    tabRecord.url = url;
-  }
+    // get the date for the current time
+    const date = new Date(currentTime);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // month is 0-indexed, so add 1
+    const day = date.getDate();
+
+    // create a new object to store the time spent data for the current day
+    const timeSpentByDay = tabRecord.timeSpentByDay || {};
+    const currentDayKey = `${year}-${month}-${day}`;
+    const currentTimeSpent = timeSpentByDay[currentDayKey] || 0;
+    const newTimeSpentByDay = { ...timeSpentByDay, [currentDayKey]: currentTimeSpent };
+
+    // set the start time for the tab if the user is not idle
+    if (lastActiveTime > (currentTime - 60 * 1000)) {
+      tabRecord.startTime = currentTime;
+      tabRecord.url = url;
+    }
 
     // save the updated tab record to storage
-    chrome.storage.local.set({[url]: tabRecord});
+    chrome.storage.local.set({ [url]: { ...tabRecord, timeSpentByDay: newTimeSpentByDay } });
   });
 }
+
 
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
   //if new tab is chrome://newtab, do nothing
   if (tabUrl.includes(ignoredURLs)) return;
-  
-  // get the current time
-  const currentTime = Date.now();
+
+  // get the current time and date
+  const now = new Date();
+  const currentDate = now.toISOString().split('T')[0];
 
   //get tab origin
   const url = new URL(tabUrl).origin;
-// check if the user is idle
-chrome.idle.queryState(60, function(state) {
-  if (state !== "active") {
-    // user is idle, do not record time
-    return;
-  }
 
   // get the tab record from storage
-  chrome.storage.local.get([url], function(result) {
-    let tabRecord = result[url];
-    if (tabRecord === undefined) {
-      tabRecord = {};
-    }
+  chrome.storage.local.get([currentDate], function(result) {
+    let data = result[currentDate] || {};
+
+    // get the record for the current tab
+    let tabRecord = data[url] || {};
 
     // if the tab has a start time, calculate the time spent
     if (tabRecord.hasOwnProperty("startTime") && lastActiveTime > (currentTime - 60 * 1000)) {
-      const timeSpent = currentTime - tabRecord.startTime;
+      const timeSpent = now.getTime() - tabRecord.startTime;
       tabRecord.timeSpent = (tabRecord.timeSpent || 0) + timeSpent;
       delete tabRecord.startTime;
-    }
 
-    // save the updated tab record to storage
-    chrome.storage.local.set({[url]: tabRecord});
+      // store the updated tab record in the data object
+      data[url] = tabRecord;
+
+      // save the updated data object to storage
+      chrome.storage.local.set({[currentDate]: data});
+    }
   });
-});
 }
 
   
