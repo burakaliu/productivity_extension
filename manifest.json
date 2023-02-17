@@ -2,7 +2,7 @@
     "name": "productivity extension",
     "version": "0.0.2",
     "description": "Saving timestamps in YT videos and trying out other stuff",
-    "permissions": ["storage", "tabs", "activeTab"],
+    "permissions": ["storage", "tabs", "activeTab", "idle"],
     "host_permissions": ["https://*/*"],
     "background": {
       "service_worker": "background.js"
