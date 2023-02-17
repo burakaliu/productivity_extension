@@ -81,9 +81,11 @@ function updateStartTime(tabUrl) {
       tabRecord = {};
     }
 
-    // set the start time for the tab
+   // set the start time for the tab if the user is not idle
+   if (lastActiveTime > (currentTime - 60 * 1000)) {
     tabRecord.startTime = currentTime;
     tabRecord.url = url;
+  }
 
     // save the updated tab record to storage
     chrome.storage.local.set({[url]: tabRecord});
@@ -100,6 +102,12 @@ function updateTimeSpent(tabUrl) {
 
   //get tab origin
   const url = new URL(tabUrl).origin;
+// check if the user is idle
+chrome.idle.queryState(60, function(state) {
+  if (state !== "active") {
+    // user is idle, do not record time
+    return;
+  }
 
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
@@ -118,6 +126,7 @@ function updateTimeSpent(tabUrl) {
     // save the updated tab record to storage
     chrome.storage.local.set({[url]: tabRecord});
   });
+});
 }
 
   
