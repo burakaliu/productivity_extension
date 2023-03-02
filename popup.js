@@ -233,12 +233,21 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 title: {
-                    display: true,
+                    display: false,
                     text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
                 },
                 legend: {
-                    position: 'border',
-                    padding: 20,
+                    display: false,
+                    labels: {
+                        display: false
+                    },
+                    position: 'bottom'
+                },
+                labels: {
+                    display: false
+                },
+                tooltips: {
+                    enabled: false,
                 },
             },
         });
