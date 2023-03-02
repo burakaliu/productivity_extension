@@ -236,19 +236,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     display: false,
                     text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
                 },
-                legend: {
-                    display: false,
-                    labels: {
-                        display: false
-                    },
-                    position: 'bottom'
-                },
-                labels: {
-                    display: false
-                },
-                tooltips: {
-                    enabled: false,
-                },
+                plugins: {
+                    legend: {
+                        display: false,
+                        labels: {
+                            color: 'rgb(255, 99, 132)'
+                        }
+                    }
+                }
             },
         });
     });
