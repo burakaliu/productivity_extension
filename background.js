@@ -20,12 +20,14 @@ let ignoredURLs = ["chrome://newtab", "chrome://extensions/", "chrome://settings
 // initialize the last active time
 let lastActiveTime = Date.now();
 
+
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   try {
     console.log("active tab changed to " + activeInfo.tabId + "");
     chrome.tabs.get(activeInfo.tabId, async function(tab){
         console.log(tab.url);
+        updateBadgeText(tab.url);
         if (activeTabUrl !== null) {
           console.log(activeTabUrl);
           console.log(tab.url);
@@ -139,6 +141,22 @@ function updateTimeSpent(tabUrl) {
       // save the updated data object to storage
       chrome.storage.local.set({[currentDate]: data});
     }
+  });
+}
+
+chrome.browserAction.setBadgeBackgroundColor({ color: "#777" });
+
+function updateBadgeText(tabUrl) {
+  const now = new Date();
+  const currentDate = now.toISOString().split("T")[0];
+  const url = new URL(tabUrl).origin;
+  chrome.storage.local.get([currentDate], function(result) {
+    let data = result[currentDate] || {};
+    let tabRecord = data[url] || {};
+    let timeSpent = tabRecord.timeSpent || 0;
+    let minutes = Math.floor(timeSpent / (1000 * 60));
+    let text = minutes > 0 ? `${minutes}m` : "";
+    chrome.browserAction.setBadgeText({ text: text });
   });
 }
 

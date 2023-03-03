@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const row = document.createElement("tr");
     
                 const urlCell = document.createElement("td");
-                console.log(tabRecord.url);
+                //console.log(tabRecord.url);
                 urlCell.textContent = new URL(tabRecord.url).origin;
                 row.appendChild(urlCell);
                 /*
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
                 tabsTable.appendChild(row);
             } catch (error) {
-                console.log("empty tab");
+                console.log("error with tab: " + tabRecord.url + " " + error);
             }
         }
 
