@@ -23,8 +23,9 @@ let lastActiveTime = Date.now();
 
 // when the user switches to a new tab, update the record for the previous tab
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+  console.log("active tab changed to " + activeInfo.tabId + "");
   try {
-    console.log("active tab changed to " + activeInfo.tabId + "");
+    //console.log("active tab changed to " + activeInfo.tabId + "");
     chrome.tabs.get(activeInfo.tabId, async function(tab){
         console.log(tab.url);
         updateBadgeText(tab.url);
@@ -147,6 +148,7 @@ function updateTimeSpent(tabUrl) {
 chrome.browserAction.setBadgeBackgroundColor({ color: "#777" });
 
 function updateBadgeText(tabUrl) {
+  console.log("updating badge text");
   const now = new Date();
   const currentDate = now.toISOString().split("T")[0];
   const url = new URL(tabUrl).origin;
@@ -156,7 +158,7 @@ function updateBadgeText(tabUrl) {
     let timeSpent = tabRecord.timeSpent || 0;
     let minutes = Math.floor(timeSpent / (1000 * 60));
     let text = minutes > 0 ? `${minutes}m` : "";
-    chrome.browserAction.setBadgeText({ text: text });
+    chrome.browserAction.setBadgeText("hello");
   });
 }
 

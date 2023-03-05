@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
                 tabsTable.appendChild(row);
             } catch (error) {
-                console.log("error with tab: " + tabRecord.url + " " + error);
+                //console.log("error with tab: " + tabRecord.url + " " + error);
             }
         }
 
