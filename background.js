@@ -12,23 +12,22 @@ chrome.storage.local.clear(function() {
 });
 chrome.storage.sync.clear(); // callback is optional
 */
-
+//chrome://newtab
 
 let activeTabUrl = null;
-let ignoredURLs = ["chrome://newtab", "chrome://extensions/", "chrome://settings/"];
+let ignoredURLs = ["chrome://newtab","chrome://newtab/", "chrome://extensions/", "chrome://settings/"];
 
 // initialize the last active time
 let lastActiveTime = Date.now();
 
-
 // when the user switches to a new tab, update the record for the previous tab
+console.log("testing");
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   console.log("active tab changed to " + activeInfo.tabId + "");
   try {
     //console.log("active tab changed to " + activeInfo.tabId + "");
     chrome.tabs.get(activeInfo.tabId, async function(tab){
         console.log(tab.url);
-        updateBadgeText(tab.url);
         if (activeTabUrl !== null) {
           console.log(activeTabUrl);
           console.log(tab.url);
@@ -44,6 +43,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 // when the user closes a tab, update the record for that tab
 chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
+  console.log("onRemoved listener");
     try {
       chrome.tabs.get(tabId, function(tab){
         updateTimeSpent(tab.url);
@@ -59,6 +59,7 @@ chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
 
 // when the user closes a window, update the record for the active tab
 chrome.windows.onRemoved.addListener(function() {
+  console.log("windows.onRemoved listener");
   try {
     if (activeTabUrl !== null) {
       updateTimeSpent(activeTabUrl);
@@ -71,15 +72,28 @@ chrome.windows.onRemoved.addListener(function() {
 
 // update the start time for a tab
 function updateStartTime(tabUrl) {
+  console.log("updating start time");
+  console.log(tabUrl);
   // if new tab is chrome://newtab, do nothing
-  if (tabUrl.includes(ignoredURLs)) return;
+  if (ignoredURLs.includes(tabUrl)) {
+    console.log("ignored url :", tabUrl);
+    return;
+  }
 
   // get the current time
   const currentTime = Date.now();
 
   // get tab origin
-  const url = new URL(tabUrl).origin;
-
+  let url;
+  try{
+    const temp = new URL(tabUrl).origin;
+    console.log("url:-", temp, "-");
+    url = temp;
+  } catch(error){
+    console.log("not a proper url");
+    return;
+  }
+  console.log("url 2: ", url);
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
     let tabRecord = result[url];
@@ -113,15 +127,25 @@ function updateStartTime(tabUrl) {
 
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
+  console.log("updating time spent");
   //if new tab is chrome://newtab, do nothing
-  if (tabUrl.includes(ignoredURLs)) return;
+  if (ignoredURLs.includes(tabUrl)) return;
 
   // get the current time and date
   const now = new Date();
   const currentDate = now.toISOString().split('T')[0];
 
   //get tab origin
-  const url = new URL(tabUrl).origin;
+  let url;
+  try{
+    const temp = new URL(tabUrl).origin;
+    console.log("url: ", temp);
+    url = temp;
+  } catch(error){
+    console.log("not a proper url");
+    return;
+  }
+  console.log("url 2: ", url);
 
   // get the tab record from storage
   chrome.storage.local.get([currentDate], function(result) {
@@ -142,23 +166,6 @@ function updateTimeSpent(tabUrl) {
       // save the updated data object to storage
       chrome.storage.local.set({[currentDate]: data});
     }
-  });
-}
-
-chrome.browserAction.setBadgeBackgroundColor({ color: "#777" });
-
-function updateBadgeText(tabUrl) {
-  console.log("updating badge text");
-  const now = new Date();
-  const currentDate = now.toISOString().split("T")[0];
-  const url = new URL(tabUrl).origin;
-  chrome.storage.local.get([currentDate], function(result) {
-    let data = result[currentDate] || {};
-    let tabRecord = data[url] || {};
-    let timeSpent = tabRecord.timeSpent || 0;
-    let minutes = Math.floor(timeSpent / (1000 * 60));
-    let text = minutes > 0 ? `${minutes}m` : "";
-    chrome.browserAction.setBadgeText("hello");
   });
 }
 
