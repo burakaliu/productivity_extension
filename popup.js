@@ -220,34 +220,40 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
 
         // create the pie chart
-        const ctx = document.getElementById("pieChart").getContext("2d");
-        new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
-                datasets: [
-                    {
-                        data: chartData.map(item => item.data),
-                        backgroundColor: chartData.map(item => item.backgroundColor),
-                    },
-                ],
-            },
-            options: {
-                title: {
-                    display: false,
-                    text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
+        try {
+            const ctx = document.getElementById("pieChart").getContext("2d");
+        
+            new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
+                    datasets: [
+                        {
+                            data: chartData.map(item => item.data),
+                            backgroundColor: chartData.map(item => item.backgroundColor),
+                        },
+                    ],
                 },
-                plugins: {
-                    legend: {
+                options: {
+                    title: {
                         display: false,
-                        labels: {
-                            color: 'rgb(255, 99, 132)'
+                        text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                            labels: {
+                                color: 'rgb(255, 99, 132)'
+                            }
                         }
                     }
-                }
-            },
-        });
+                },
+            });
+        } catch (error) {
+            console.log("error creating pie chart" + error);
+        }
     });
+    
       function randomColor() {
         return `#${Math.floor(Math.random()*16777215).toString(16)}`;
       }
