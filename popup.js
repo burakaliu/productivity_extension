@@ -1,14 +1,15 @@
 //script for popup.html page
 
 import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseMillisecondsIntoReadableTime} from "./utils.js";
-//import Chart from 'chart.js/auto';
-let blacklist = []; 
-//"https://monkeytype.com/", "https://www.youtube.com/"
 
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
     console.log(result.onoff);
-    result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
+    try{
+        result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
+    }catch(error){
+        console.log("error: " + error);
+    }
 });
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 

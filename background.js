@@ -72,8 +72,7 @@ chrome.windows.onRemoved.addListener(function() {
 
 // update the start time for a tab
 function updateStartTime(tabUrl) {
-  console.log("updating start time");
-  console.log(tabUrl);
+  console.log("updating start time for :", tabUrl);
   // if new tab is chrome://newtab, do nothing
   if (ignoredURLs.includes(tabUrl)) {
     console.log("ignored url :", tabUrl);
@@ -127,7 +126,7 @@ function updateStartTime(tabUrl) {
 
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
-  console.log("updating time spent");
+  console.log("updating time spent for: ", tabUrl);
   //if new tab is chrome://newtab, do nothing
   if (ignoredURLs.includes(tabUrl)) return;
 
@@ -142,7 +141,7 @@ function updateTimeSpent(tabUrl) {
     console.log("url: ", temp);
     url = temp;
   } catch(error){
-    console.log("not a proper url");
+    console.log("from inside updateTimeSpent() not a proper url");
     return;
   }
   console.log("url 2: ", url);
