@@ -44,7 +44,6 @@ if (document.getElementById("checkbox") != null){
 }
 
 
-
 async function addNewBlacklistedSite (url) {
 
     if (url.length > 1){
@@ -280,9 +279,20 @@ function formdata() {
     //console.log(document.getElementById("blacklistInput").value);
     
 }
-
-
-
+/*
+function resetChromeStorage() {
+    chrome.storage.local.clear(function() {
+        console.log("cleared chrome storage");
+        var error = chrome.runtime.lastError;
+        if (error) {
+            console.error(error);
+        }
+    });
+}
+if (document.getElementById("resetChromeStorage") != null){
+    //document.getElementById("resetChromeStorage").onclick = resetChromeStorage();
+}
+*/
 
 
 
