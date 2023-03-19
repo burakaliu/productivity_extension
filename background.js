@@ -4,42 +4,28 @@
 let activeTabUrl = null;
 let ignoredURLs = ["chrome://newtab","chrome://newtab/", "chrome://extensions/", "chrome://settings/"];
 
+// initialize an object to store tab URLs
+const tabUrls = {};
+
 // initialize the last active time
 let lastActiveTime = Date.now();
 
 // when the user switches to a new tab, update the record for the previous tab
-console.log("testing");
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   try {
     chrome.tabs.get(activeInfo.tabId, async function(tab){
-        console.log("active tab changed to " + activeInfo.tabId + " which is: ", tab.url);
+        console.log("active tab changed to " + activeInfo.tabId + " which is: ", tab.url, "current active tab: ", activeTabUrl);
         if (activeTabUrl !== null) {
           await updateTimeSpent(activeTabUrl);
         }
         activeTabUrl = tab.url;
+        console.log("Active tab url is now changed to: ", activeTabUrl);
         updateStartTime(activeTabUrl);
     });
   } catch (error) {
     console.error(error);
   }
 });
-
-// when the user closes a tab, update the record for that tab
-chrome.tabs.onRemoved.addListener(function(tabId,removeInfo) {
-  console.log("onRemoved listener triggered");
-    try {
-      chrome.tabs.get(tabId, function(tab){
-        console.log("tab: ", tab);
-        updateTimeSpent(tab.url);
-        if (activeTabUrl === tab.url) {
-          activeTabUrl = null;
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  });
-  
 
 // when the user closes a window, update the record for the active tab
 chrome.windows.onRemoved.addListener(function() {
@@ -56,7 +42,7 @@ chrome.windows.onRemoved.addListener(function() {
 
 // update the start time for a tab
 function updateStartTime(tabUrl) {
-  console.log("updating start time for :", tabUrl);
+  console.log("updating start time for :", tabUrl, "activeTabUrl: ", activeTabUrl);
   // if new tab is chrome://newtab, do nothing
   if (ignoredURLs.includes(tabUrl)) {
     console.log("ignored url :", tabUrl);
@@ -75,7 +61,6 @@ function updateStartTime(tabUrl) {
     console.log("not a proper url: ", error, "tabUrl: ", tabUrl);
     return;
   }
-  console.log("url 2: ", url);
   // get the tab record from storage
   chrome.storage.local.get([url], function(result) {
     let tabRecord = result[url];
@@ -109,7 +94,7 @@ function updateStartTime(tabUrl) {
 
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
-  console.log("updating time spent for: ", tabUrl);
+  console.log("updating time spent for: ", tabUrl, "activeTabUrl: ", activeTabUrl);
   //if new tab is chrome://newtab, do nothing
   if (ignoredURLs.includes(tabUrl)) return;
 
@@ -126,7 +111,6 @@ function updateTimeSpent(tabUrl) {
     console.log("from inside updateTimeSpent() not a proper url: ", error, "tabUrl: ", tabUrl);
     return;
   }
-  console.log("url 2: ", url);
 
   // get the tab record from storage
   chrome.storage.local.get([currentDate], function(result) {

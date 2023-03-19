@@ -18,7 +18,7 @@ chrome.storage.local.get(["onoff"], (result) => {
 chrome.storage.local.get(["list"], (result) => { 
     //console.log(result.list);
     if (result.list == null){
-        //console.log("nothing in chrome data index 'list'");
+        console.log("nothing in chrome data index 'list'");
     }else{
         for (let i = 0; i < result.list.length; i ++){
             addOldBlacklistedSite(result.list[i]);
@@ -32,11 +32,11 @@ if (document.getElementById("checkbox") != null){
         //console.log("clicked on slider");
         if (document.getElementById("checkbox").checked) {
             chrome.storage.local.set({"onoff": "on"}, function(){
-                //console.log("tab blocker is now on");
+                console.log("tab blocker is now on");
             });
         } else {
             chrome.storage.local.set({"onoff": "off"}, function(){
-                //console.log("tab blocker is now off");
+                console.log("tab blocker is now off");
             });
         }
     });
@@ -263,7 +263,7 @@ function formdata() {
     // use `url` here inside the callback because it's asynchronous!
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
         let url = tabs[0].url;
-        console.log(url);
+        console.log("adding site to blacklist: ", url);
         addNewBlacklistedSite(url);
         document.getElementById("blacklistInput").value = "";
         // use `url` here inside the callback because it's asynchronous!
@@ -289,6 +289,9 @@ function resetChromeStorage() {
     });
 }
 if (document.getElementById("resetChromeStorage") != null){
-    //document.getElementById("resetChromeStorage").onclick = resetChromeStorage();
+    document.getElementById("resetChromeStorage").onclick = resetChromeStorage();
 }
 */
+if (document.getElementById("printChromeStorage") != null){
+    document.getElementById("printChromeStorage").onclick = chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) });
+}
