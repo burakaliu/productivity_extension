@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseMillisecondsIntoReadableTime, getTodayDateString} from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString} from "./utils.js";
 
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
@@ -166,66 +166,55 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("blsiteadder").onclick = formdata;
     }
 
-    
-    // index.js
-    console.log("this is running");
-    // get the tabs table from the HTML file
-    const tabsTable = document.getElementById("tabs");
     // get all of the day records from storage
     chrome.storage.local.get(null, function(result) {
         console.log("result: ", result);
 
         const today = getTodayDateString();
-        console.log("today: ", today);
-
-        console.log("udbafs: ", result[today]);
-        /*
-        // sort the tab records by time spent for today
-        const sortedTabRecords = Object.values(result[today])
-            .filter(item => item && item[extractNameFromURL(item.url)] > 0)
-            .sort(function(a, b) {
-                return (b[today][extractNameFromURL(b.url)] || 0) - (a[today][extractNameFromURL(a.url)] || 0);
-            });
-*/
-        const sortedTabRecords2 = Object.values(result).forEach((item) => {
-            if (item.value > 0) {
-                console.log("item: ", item);
-            }else{
-                console.log("item is not valid: ", item);
-            }
-        });
+        var sortedTabRecords = [];
+        try{
+            sortedTabRecords = Object.entries(result[today]).filter(element => element[1] > 0 && element.length > 1).sort((a, b) => b[1] - a[1]);
+        }catch(error){
+            console.log("error sorting tab records: ", error);
+        }
 
         console.log("sortedTabRecords: ", sortedTabRecords);
 
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
-            try {
-                const row = document.createElement("tr");
-
-                const urlCell = document.createElement("td");
-                urlCell.textContent = new URL(tabRecord.url).origin;
-                row.appendChild(urlCell);
-
-                const timeSpentCell = document.createElement("td");
-                timeSpentCell.textContent = parseMillisecondsIntoReadableTime(tabRecord[today].timeSpent);
-                row.appendChild(timeSpentCell);
-
-                tabsTable.appendChild(row);
-            } catch (error) {
-                console.log("error with tab: " + tabRecord.url + " " + error);
+            if (document.getElementById("tabs") != null){
+                   // get the tabs table from the HTML file
+                   const tabsTable = document.getElementById("tabs");
+                   const row = document.createElement("tr");
+   
+                   const urlCell = document.createElement("td");
+                   urlCell.textContent = tabRecord[0];
+                   row.appendChild(urlCell);
+   
+                   const timeSpentCell = document.createElement("td");
+                   timeSpentCell.textContent = parseSecondsIntoReadableTime(tabRecord[1]);
+                   row.appendChild(timeSpentCell);
+   
+                   tabsTable.appendChild(row);
             }
         }
 
         /* create the pie chart */
         // get the total time spent on all tabs for today
-        const chartData = Object.values(result)
-            .filter(item => item[today] && item[today].timeSpent > 60000)
+        var chartData = [];
+        try {
+            chartData = Object.entries(result[today])
+            .filter(element => element[1] > 0 && element.length > 1)
             .map(item => ({
-                label: extractNameFromURL(item.url),
-                data: item[today].timeSpent,
-                readableTime: parseMillisecondsIntoReadableTime(item[today].timeSpent),
-                backgroundColor: randomColor(),
+            label: extractNameFromURL(item[0]),
+            data: item[1],
+            readableTime: parseSecondsIntoReadableTime(item[1]),
+            backgroundColor: randomColor(),
             }));
+        } catch (error) {
+            console.log("error creating chart data: ", error);
+        }
+        
 
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
 
@@ -236,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    labels: chartData.map(item => `${item.label} (${parseMillisecondsIntoReadableTime(item.data)})`),
+                    labels: chartData.map(item => `${item.label} (${parseSecondsIntoReadableTime(item.data)})`),
                     datasets: [
                         {
                             data: chartData.map(item => item.data),
@@ -247,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 options: {
                     title: {
                         display: false,
-                        text: `Total Time Spent: ${parseMillisecondsIntoReadableTime(totalTimeSpent)}`,
+                        text: `Total Time Spent: ${parseSecondsIntoReadableTime(totalTimeSpent)}`,
                     },
                     plugins: {
                         legend: {

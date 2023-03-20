@@ -19,7 +19,22 @@ var currentTabId;
 var currentTabName;
 
 // Start the timer to update the time spent every second
-setInterval(updateTimeSpent, 1000);
+let timerId = null; // initialize timerId variable
+
+function startTimer() {
+  if (!timerId) { // check if timer is not already running
+    timerId = setInterval(updateTimeSpent, 1000); // start the timer
+  }
+}
+
+function stopTimer() {
+  if (timerId) { // check if timer is running
+    clearInterval(timerId); // stop the timer
+    timerId = null; // reset the timerId variable
+  }
+}
+
+startTimer(); // start the timer when the extension is loaded
 
 // Function to update the time spent on the current tab
 function updateTimeSpent() {
@@ -32,19 +47,22 @@ function updateTimeSpent() {
     if (tabs[0]) {
       // If the current tab ID has changed, update the currentTabId variable and reset the timeSpent variable
       if (currentTabName !== extractNameFromURL(tabs[0].url)) {
+        console.log("currentTabName: ", currentTabName, "extractNameFromURL(tabs[0].url): ", extractNameFromURL(tabs[0].url));
         currentTabName = extractNameFromURL(tabs[0].url);
         console.log("new currenttabname: ", currentTabName);
         timeSpent = 0;
       }
       // Increment the time spent variable by 1 second
-      timeSpent += 1;
+      if (tabs[0].active){
+        timeSpent += 1;
+      }
       // Get the tab data for the current date from chrome storage
       chrome.storage.local.get(currentDate, function(result) {
         console.log("result: ", result);
         var dayData = result[currentDate] || {};
         // Update the time spent for the current tab in the day data object
         console.log("daydata: ", dayData, " ", dayData[extractNameFromURL(tabs[0].url)]);
-        dayData[currentTabName] = (dayData[currentTabName] || 0) + timeSpent;
+        dayData[currentTabName] = timeSpent;
         // Store the updated day data object back in chrome storage
         var data = {};
         data[currentDate] = dayData;

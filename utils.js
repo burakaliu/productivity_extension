@@ -85,6 +85,26 @@ export const parseMillisecondsIntoReadableTime = (milliseconds) => {
   
     return h + ' hours, ' + m + 'minutes, ' + s + " seconds";
   }
+  
+  export const parseSecondsIntoReadableTime = (seconds) => {
+    // Get hours from seconds
+    var hours = seconds / 3600;
+    var absoluteHours = Math.floor(hours);
+    var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
+  
+    // Get remainder from hours and convert to minutes
+    var minutes = (hours - absoluteHours) * 60;
+    var absoluteMinutes = Math.floor(minutes);
+    var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
+  
+    // Get remainder from minutes and convert to seconds
+    var remainingSeconds = (minutes - absoluteMinutes) * 60;
+    var absoluteSeconds = Math.floor(remainingSeconds);
+    var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
+  
+    return h + ' hours, ' + m + ' minutes, ' + s + ' seconds';
+  }
+  
 
   // Function to get today's date string in the format of YYYY-MM-DD
 export const getTodayDateString = () => {
