@@ -34,7 +34,7 @@ export const getHostName = (url) => {
   export const extractNameFromURL = (url) => {
     const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
     const match = urlRegex.exec(url);
-    return match ? match[1] : "";
+    return (match ? match[1] : "").toString();
   }
   
   
@@ -85,4 +85,13 @@ export const parseMillisecondsIntoReadableTime = (milliseconds) => {
   
     return h + ' hours, ' + m + 'minutes, ' + s + " seconds";
   }
+
+  // Function to get today's date string in the format of YYYY-MM-DD
+export const getTodayDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+}
   

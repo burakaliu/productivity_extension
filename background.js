@@ -4,42 +4,56 @@
 let activeTabUrl = null;
 let ignoredURLs = ["chrome://newtab","chrome://newtab/", "chrome://extensions/", "chrome://settings/"];
 
+
 // initialize an object to store tab URLs
 const tabUrls = {};
 
 // initialize the last active time
 let lastActiveTime = Date.now();
 
-// when the user switches to a new tab, update the record for the previous tab
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  try {
-    chrome.tabs.get(activeInfo.tabId, async function(tab){
-        console.log("active tab changed to " + activeInfo.tabId + " which is: ", tab.url, "current active tab: ", activeTabUrl);
-        if (activeTabUrl !== null) {
-          await updateTimeSpent(activeTabUrl);
-        }
-        activeTabUrl = tab.url;
-        console.log("Active tab url is now changed to: ", activeTabUrl);
-        updateStartTime(activeTabUrl);
-    });
-  } catch (error) {
-    console.error(error);
-  }
-});
+// Declare a variable to store the time spent on the current tab
+var timeSpent = 0;
 
-// when the user closes a window, update the record for the active tab
-chrome.windows.onRemoved.addListener(function() {
-  console.log("windows.onRemoved listener");
-  try {
-    if (activeTabUrl !== null) {
-      updateTimeSpent(activeTabUrl);
-      activeTabUrl = null;
+// Declare a variable to store the current tab ID
+var currentTabId;
+var currentTabName;
+
+// Start the timer to update the time spent every second
+setInterval(updateTimeSpent, 1000);
+
+// Function to update the time spent on the current tab
+function updateTimeSpent() {
+  // Get the current date in YYYY-MM-DD format
+  var currentDate = getTodayDateString();
+  
+  // Get the current tab
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    // If there is a current tab
+    if (tabs[0]) {
+      // If the current tab ID has changed, update the currentTabId variable and reset the timeSpent variable
+      if (currentTabName !== extractNameFromURL(tabs[0].url)) {
+        currentTabName = extractNameFromURL(tabs[0].url);
+        console.log("new currenttabname: ", currentTabName);
+        timeSpent = 0;
+      }
+      // Increment the time spent variable by 1 second
+      timeSpent += 1;
+      // Get the tab data for the current date from chrome storage
+      chrome.storage.local.get(currentDate, function(result) {
+        console.log("result: ", result);
+        var dayData = result[currentDate] || {};
+        // Update the time spent for the current tab in the day data object
+        console.log("daydata: ", dayData, " ", dayData[extractNameFromURL(tabs[0].url)]);
+        dayData[currentTabName] = (dayData[currentTabName] || 0) + timeSpent;
+        // Store the updated day data object back in chrome storage
+        var data = {};
+        data[currentDate] = dayData;
+        chrome.storage.local.set(data);
+      });
     }
-  } catch (error) {
-    console.error(error);
-  }
-});
-
+  });
+}
+/*
 // update the start time for a tab
 function updateStartTime(tabUrl) {
   console.log("updating start time for :", tabUrl, "activeTabUrl: ", activeTabUrl);
@@ -90,8 +104,22 @@ function updateStartTime(tabUrl) {
     chrome.storage.local.set({ [url]: { ...tabRecord, timeSpentByDay: newTimeSpentByDay } });
   });
 }
+*/
+function getTodayDateString(){
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+}
 
+function extractNameFromURL(url){
+  const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
+  const match = urlRegex.exec(url);
+  return (match ? match[1] : "").toString();
+}
 
+/*
 // update the time spent on a tab
 function updateTimeSpent(tabUrl) {
   console.log("updating time spent for: ", tabUrl, "activeTabUrl: ", activeTabUrl);
@@ -133,3 +161,4 @@ function updateTimeSpent(tabUrl) {
     }
   });
 }
+*/

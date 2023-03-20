@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseMillisecondsIntoReadableTime} from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseMillisecondsIntoReadableTime, getTodayDateString} from "./utils.js";
 
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
@@ -171,47 +171,50 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("this is running");
     // get the tabs table from the HTML file
     const tabsTable = document.getElementById("tabs");
-
-    // get all of the tab records from storage
+    // get all of the day records from storage
     chrome.storage.local.get(null, function(result) {
-        console.log(result);
-        // sort the tab records by time spent
-        const sortedTabRecords = Object.values(result).sort(function(a, b) {
-            return (b.timeSpent || 0) - (a.timeSpent || 0);
-        });
-    
+        console.log("result: ", result);
+
+        const today = getTodayDateString();
+        console.log("today: ", today);
+
+
+        // sort the tab records by time spent for today
+        const sortedTabRecords = Object.values(result)
+            .filter(item => item[today] && item[today].timeSpent > 0)
+            .sort(function(a, b) {
+                return (b[today].timeSpent || 0) - (a[today].timeSpent || 0);
+            });
+
+        console.log("sortedTabRecords: ", sortedTabRecords);
+
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
             try {
                 const row = document.createElement("tr");
-    
+
                 const urlCell = document.createElement("td");
-                //console.log(tabRecord.url);
                 urlCell.textContent = new URL(tabRecord.url).origin;
                 row.appendChild(urlCell);
-                /*
-                const titleCell = document.createElement("td");
-                titleCell.textContent = tabRecord.title;
-                row.appendChild(titleCell);
-                */
+
                 const timeSpentCell = document.createElement("td");
-                timeSpentCell.textContent = parseMillisecondsIntoReadableTime(tabRecord.timeSpent);
+                timeSpentCell.textContent = parseMillisecondsIntoReadableTime(tabRecord[today].timeSpent);
                 row.appendChild(timeSpentCell);
-            
+
                 tabsTable.appendChild(row);
             } catch (error) {
-                //console.log("error with tab: " + tabRecord.url + " " + error);
+                console.log("error with tab: " + tabRecord.url + " " + error);
             }
         }
 
         /* create the pie chart */
-        // get the total time spent on all tabs
+        // get the total time spent on all tabs for today
         const chartData = Object.values(result)
-            .filter(item => item.timeSpent > 60000)
+            .filter(item => item[today] && item[today].timeSpent > 60000)
             .map(item => ({
                 label: extractNameFromURL(item.url),
-                data: item.timeSpent,
-                readableTime: parseMillisecondsIntoReadableTime(item.timeSpent),
+                data: item[today].timeSpent,
+                readableTime: parseMillisecondsIntoReadableTime(item[today].timeSpent),
                 backgroundColor: randomColor(),
             }));
 
@@ -220,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // create the pie chart
         try {
             const ctx = document.getElementById("pieChart").getContext("2d");
-        
+
             new Chart(ctx, {
                 type: "pie",
                 data: {
@@ -278,7 +281,7 @@ function formdata() {
     //console.log(document.getElementById("blacklistInput").value);
     
 }
-/*
+
 function resetChromeStorage() {
     chrome.storage.local.clear(function() {
         console.log("cleared chrome storage");
@@ -289,9 +292,9 @@ function resetChromeStorage() {
     });
 }
 if (document.getElementById("resetChromeStorage") != null){
-    document.getElementById("resetChromeStorage").onclick = resetChromeStorage();
+    document.getElementById("resetChromeStorage").onclick = resetChromeStorage;
 }
-*/
+
 if (document.getElementById("printChromeStorage") != null){
-    document.getElementById("printChromeStorage").onclick = chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) });
+    document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
 }
