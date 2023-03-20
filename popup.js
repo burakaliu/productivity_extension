@@ -178,13 +178,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const today = getTodayDateString();
         console.log("today: ", today);
 
-
+        console.log("udbafs: ", result[today]);
+        /*
         // sort the tab records by time spent for today
-        const sortedTabRecords = Object.values(result)
-            .filter(item => item[today] && item[today].timeSpent > 0)
+        const sortedTabRecords = Object.values(result[today])
+            .filter(item => item && item[extractNameFromURL(item.url)] > 0)
             .sort(function(a, b) {
-                return (b[today].timeSpent || 0) - (a[today].timeSpent || 0);
+                return (b[today][extractNameFromURL(b.url)] || 0) - (a[today][extractNameFromURL(a.url)] || 0);
             });
+*/
+        const sortedTabRecords2 = Object.values(result).forEach((item) => {
+            if (item.value > 0) {
+                console.log("item: ", item);
+            }else{
+                console.log("item is not valid: ", item);
+            }
+        });
 
         console.log("sortedTabRecords: ", sortedTabRecords);
 
