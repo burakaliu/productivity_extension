@@ -9,7 +9,7 @@ let ignoredURLs = ["chrome://newtab","chrome://newtab/", "chrome://extensions/",
 const tabUrls = {};
 
 // initialize the last active time
-let lastActiveTime = Date.now();
+let lastActiveTime = performance.now();
 
 // Declare a variable to store the time spent on the current tab
 var timeSpent = 0;
@@ -36,6 +36,7 @@ function stopTimer() {
 
 startTimer(); // start the timer when the extension is loaded
 
+
 // Function to update the time spent on the current tab
 function updateTimeSpent() {
   // Get the current date in YYYY-MM-DD format
@@ -45,19 +46,27 @@ function updateTimeSpent() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     // If there is a current tab
     if (tabs[0]) {
-      // If the current tab ID has changed, update the currentTabId variable and reset the timeSpent variable
-      if (currentTabName !== extractNameFromURL(tabs[0].url)) {
-        console.log("currentTabName: ", currentTabName, "extractNameFromURL(tabs[0].url): ", extractNameFromURL(tabs[0].url));
-        currentTabName = extractNameFromURL(tabs[0].url);
-        console.log("new currenttabname: ", currentTabName);
-        timeSpent = 0;
-      }
-      // Increment the time spent variable by 1 second
-      if (tabs[0].active){
-        timeSpent += 1;
-      }
+      
       // Get the tab data for the current date from chrome storage
       chrome.storage.local.get(currentDate, function(result) {
+
+          // If the current tab ID has changed, update the currentTabId variable and reset the timeSpent variable
+        if (currentTabName !== extractNameFromURL(tabs[0].url)) {
+          console.log("currentTabName: ", currentTabName, "extractNameFromURL(tabs[0].url): ", extractNameFromURL(tabs[0].url));
+          currentTabName = extractNameFromURL(tabs[0].url);
+          console.log("new currenttabname: ", currentTabName);
+          console.log("result[currentDate]: ", result[currentDate]);
+          console.log("result[currentDate][currentTabName]: ", result[currentDate][currentTabName]);
+          timeSpent = result[currentDate][currentTabName];
+        }
+        // Calculate the elapsed time since the last update using performance.now()
+        const currentTime = performance.now();
+        const elapsedTime = currentTime - lastActiveTime;
+        lastActiveTime = currentTime;
+
+        // Increment the time spent variable with the elapsed time, converted to seconds
+        timeSpent += elapsedTime / 1000;
+
         console.log("result: ", result);
         var dayData = result[currentDate] || {};
         // Update the time spent for the current tab in the day data object
@@ -66,11 +75,27 @@ function updateTimeSpent() {
         // Store the updated day data object back in chrome storage
         var data = {};
         data[currentDate] = dayData;
+        console.log("thing being put into chrome storage: ", data);
         chrome.storage.local.set(data);
       });
     }
   });
 }
+
+function getTodayDateString(){
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+}
+
+function extractNameFromURL(url){
+  const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
+  const match = urlRegex.exec(url);
+  return (match ? match[1] : "").toString();
+}
+
 /*
 // update the start time for a tab
 function updateStartTime(tabUrl) {
@@ -123,19 +148,6 @@ function updateStartTime(tabUrl) {
   });
 }
 */
-function getTodayDateString(){
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const day = today.getDate();
-  return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
-}
-
-function extractNameFromURL(url){
-  const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
-  const match = urlRegex.exec(url);
-  return (match ? match[1] : "").toString();
-}
 
 /*
 // update the time spent on a tab
