@@ -19,7 +19,9 @@
           "assets/bookmark.png",
           "assets/play.png",
           "assets/delete.png",
-          "assets/save.png"
+          "assets/save.png",
+          "node_modules/chart.js",
+          "node_modules/chartjs-plugin-datalabels"
         ],
         "matches": ["*://*/*"]
       }

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "chart.js": "^4.1.2"
+    "chart.js": "^4.2.1",
+    "chartjs-plugin-center-text-doughnut": "^1.0.2"
   }
 }

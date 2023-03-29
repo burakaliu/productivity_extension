@@ -56,8 +56,8 @@ function updateTimeSpent() {
           currentTabName = extractNameFromURL(tabs[0].url);
           console.log("new currenttabname: ", currentTabName);
           console.log("result[currentDate]: ", result[currentDate]);
-          console.log("result[currentDate][currentTabName]: ", result[currentDate][currentTabName]);
-          timeSpent = result[currentDate][currentTabName];
+          console.log("result[currentDate][currentTabName]: ", result[currentDate][currentTabName] || 0);
+          timeSpent = result[currentDate][currentTabName] || 0;
         }
         // Calculate the elapsed time since the last update using performance.now()
         const currentTime = performance.now();

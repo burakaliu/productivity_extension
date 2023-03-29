@@ -218,12 +218,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
 
+        // show value in center plugin
+        const plugin = {
+            id: "plugin",
+            beforeDraw(chart, args, options){
+                const { ctx, chartArea: {top, right, bottom, left, width, height} } = chart;
+                ctx.save();
+                ctx.fillStyle = "blue";
+                const centerX = (left + right) / 2;
+                const centerY = (top + bottom) / 2;
+                const squareSize = 10;
+                ctx.fillRect(200, 200, 10, 10);
+                ctx.fillRect(centerX - squareSize / 2, centerY - squareSize / 2, squareSize, squareSize);
+                //x0, y0, x1, y1 - x0 = starting point on horizontal level l/r, y0 = starting point on the vertical level t/b, x1 = length of square in pixels horizontal, y1 = length of shape vertical 
+
+            }
+        };
+
+        // data for the chart
+        const data = {
+            labels: chartData.map(item => `${item.label} (${parseSecondsIntoReadableTime(item.data)})`),
+                    datasets: [
+                        {
+                            data: chartData.map(item => item.data),
+                            backgroundColor: chartData.map(item => item.backgroundColor),
+                        },
+                    ],
+        };
+
+        //config for the chart
+        const config = {
+            type: "doughnut",
+            data: data,
+            options: {
+                responsive: true,
+                //remove the legend
+                plugins: {
+                    [plugin.id]: [plugin],
+                    legend: {
+                        display: false,
+                    },
+                    title: {
+                        display: true,
+                        text: `Total time spent on tabs today: ${parseSecondsIntoReadableTime(totalTimeSpent)}`,
+                    },
+                },
+            },
+        };
+
+        // render init block
+        const myChart = new Chart(
+            document.getElementById("pieChart"),
+            config
+        );
+/*
         // create the pie chart
         try {
             const ctx = document.getElementById("pieChart").getContext("2d");
 
             new Chart(ctx, {
-                type: "pie",
+                type: "doughnut",
                 data: {
                     labels: chartData.map(item => `${item.label} (${parseSecondsIntoReadableTime(item.data)})`),
                     datasets: [
@@ -234,25 +288,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     ],
                 },
                 options: {
-                    title: {
-                        display: false,
-                        text: `Total Time Spent: ${parseSecondsIntoReadableTime(totalTimeSpent)}`,
-                    },
-                    plugins: {
-                        legend: {
-                            display: false,
-                            labels: {
-                                color: 'rgb(255, 99, 132)'
-                            }
-                        }
-                    }
+                    
                 },
             });
         } catch (error) {
             console.log("error creating pie chart" + error);
         }
+        */
     });
-    
+
       function randomColor() {
         return `#${Math.floor(Math.random()*16777215).toString(16)}`;
       }
