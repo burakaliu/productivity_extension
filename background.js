@@ -39,6 +39,10 @@ startTimer(); // start the timer when the extension is loaded
 
 // Function to update the time spent on the current tab
 function updateTimeSpent() {
+
+  //for testing if the timer is working
+  //console.log("updating time spent. Date.now is ", Date.now()/1000, " performance.now is ", performance.now()/1000);
+
   // Get the current date in YYYY-MM-DD format
   var currentDate = getTodayDateString();
   
@@ -52,30 +56,19 @@ function updateTimeSpent() {
 
           // If the current tab ID has changed, update the currentTabId variable and reset the timeSpent variable
         if (currentTabName !== extractNameFromURL(tabs[0].url)) {
-          console.log("currentTabName: ", currentTabName, "extractNameFromURL(tabs[0].url): ", extractNameFromURL(tabs[0].url));
           currentTabName = extractNameFromURL(tabs[0].url);
-          console.log("new currenttabname: ", currentTabName);
-          console.log("result[currentDate]: ", result[currentDate]);
-          console.log("result[currentDate][currentTabName]: ", result[currentDate][currentTabName] || 0);
           timeSpent = result[currentDate][currentTabName] || 0;
         }
-        // Calculate the elapsed time since the last update using performance.now()
-        const currentTime = performance.now();
-        const elapsedTime = currentTime - lastActiveTime;
-        lastActiveTime = currentTime;
 
         // Increment the time spent variable with the elapsed time, converted to seconds
-        timeSpent += elapsedTime / 1000;
+        timeSpent += 1;
 
-        console.log("result: ", result);
         var dayData = result[currentDate] || {};
         // Update the time spent for the current tab in the day data object
-        console.log("daydata: ", dayData, " ", dayData[extractNameFromURL(tabs[0].url)]);
         dayData[currentTabName] = timeSpent;
         // Store the updated day data object back in chrome storage
         var data = {};
         data[currentDate] = dayData;
-        console.log("thing being put into chrome storage: ", data);
         chrome.storage.local.set(data);
       });
     }
