@@ -164,13 +164,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
-    }
+    } 
 
+    loadChartOfDay("2023-03-23");
+});
+
+function loadChartOfDay(day){
+    
     // get all of the day records from storage
     chrome.storage.local.get(null, function(result) {
         console.log("result: ", result);
 
-        const today = getTodayDateString();
+        const today = day; //getTodayDateString();
         var sortedTabRecords = [];
         try{
             sortedTabRecords = Object.entries(result[today]).filter(element => element[1] > 0 && element.length > 1).sort((a, b) => b[1] - a[1]);
@@ -299,11 +304,11 @@ document.addEventListener("DOMContentLoaded", function () {
         */
     });
 
-      function randomColor() {
-        return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-      }
-    
-});
+}
+
+function randomColor() {
+    return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+}
 
 function formdata() {
     
