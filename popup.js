@@ -250,11 +250,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const config = {
             type: "doughnut",
             data: data,
+            borderWidth: 2,
+            borderRadius: 50,
             options: {
                 responsive: true,
                 //remove the legend
                 plugins: {
-                    [plugin.id]: [plugin],
                     legend: {
                         display: false,
                     },
@@ -265,12 +266,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
             },
         };
-
+        
         // render init block
         const myChart = new Chart(
             document.getElementById("pieChart"),
             config
         );
+        
 /*
         // create the pie chart
         try {
