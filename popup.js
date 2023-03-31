@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("blsiteadder").onclick = formdata;
     } 
 
-    loadChartOfDay("2023-03-23");
+    loadChartOfDay(getTodayDateString());
 });
 
 function loadChartOfDay(day){
