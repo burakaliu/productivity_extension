@@ -37,10 +37,21 @@ function stopTimer() {
 startTimer(); // start the timer when the extension is loaded
 
 
+//to track wether the user is idle or not
+let lastRequestTime = Date.now();
+
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    lastRequestTime = Date.now();
+  },
+  { urls: ["<all_urls>"] }
+);
+
+
 // Function to update the time spent on the current tab
 function updateTimeSpent() {
 
-  //for testing if the timer is working
+  //for testing if the timer is working   
   //console.log("updating time spent. Date.now is ", Date.now()/1000, " performance.now is ", performance.now()/1000);
 
   // Get the current date in YYYY-MM-DD format
@@ -49,7 +60,7 @@ function updateTimeSpent() {
   // Get the current tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     // If there is a current tab
-    if (tabs[0]) {
+    if (tabs[0] && Date.now() - lastRequestTime > 10 * 60 * 1000) { //if idle for longer than 10 minutes, don't update time spent
 
       console.log("tabs[0].url is ", tabs[0].url, "performance is ", performance.now()/1000, "Date.now is ", Date.now()/1000);
       
