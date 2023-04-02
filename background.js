@@ -50,6 +50,8 @@ function updateTimeSpent() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     // If there is a current tab
     if (tabs[0]) {
+
+      console.log("tabs[0].url is ", tabs[0].url, "performance is ", performance.now()/1000, "Date.now is ", Date.now()/1000);
       
       // Get the tab data for the current date from chrome storage
       chrome.storage.local.get(currentDate, function(result) {
