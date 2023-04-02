@@ -102,7 +102,7 @@ export const parseMillisecondsIntoReadableTime = (milliseconds) => {
     var absoluteSeconds = Math.floor(remainingSeconds);
     var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
   
-    return h + ' hours, ' + m + ' minutes, ' + s + ' seconds';
+    return h + ' hrs ' + m + ' min ' + s + ' sec';
   }
   
 

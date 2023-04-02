@@ -178,7 +178,7 @@ function loadChartOfDay(day){
         const today = day; //getTodayDateString();
         var sortedTabRecords = [];
         try{
-            sortedTabRecords = Object.entries(result[today]).filter(element => element[1] > 0 && element.length > 1).sort((a, b) => b[1] - a[1]);
+            sortedTabRecords = Object.entries(result[today]).filter(element => element[1] > 60 && element.length > 1).sort((a, b) => b[1] - a[1]);
         }catch(error){
             console.log("error sorting tab records: ", error);
         }
@@ -188,19 +188,30 @@ function loadChartOfDay(day){
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
             if (document.getElementById("tabs") != null){
-                   // get the tabs table from the HTML file
-                   const tabsTable = document.getElementById("tabs");
-                   const row = document.createElement("tr");
-   
-                   const urlCell = document.createElement("td");
-                   urlCell.textContent = tabRecord[0];
-                   row.appendChild(urlCell);
-   
-                   const timeSpentCell = document.createElement("td");
-                   timeSpentCell.textContent = parseSecondsIntoReadableTime(tabRecord[1]);
-                   row.appendChild(timeSpentCell);
-   
-                   tabsTable.appendChild(row);
+
+                const tabsTable = document.getElementById("tabs");
+                const tabRow = document.createElement("tr");
+                const icon = document.createElement("img");
+                const urlCell = document.createElement("td");
+                const timeSpentCell = document.createElement("td");
+
+                tabRow.className = "tab-row";
+                icon.className = "tab-icon";
+                urlCell.className = "tab-url";
+                timeSpentCell.className = "tab-time-spent";
+
+                urlCell.textContent = tabRecord[0];
+                icon.src = `https://www.${urlCell.textContent}/favicon.ico`;
+                icon.addEventListener("error", () => {
+                    icon.src = "/assets/default.png"; // replace with URL of default icon
+                });
+                tabRow.appendChild(icon);
+                tabRow.appendChild(urlCell);
+
+                timeSpentCell.textContent = parseSecondsIntoReadableTime(tabRecord[1]);
+                tabRow.appendChild(timeSpentCell);
+
+                tabsTable.appendChild(tabRow);
             }
         }
 
@@ -209,7 +220,7 @@ function loadChartOfDay(day){
         var chartData = [];
         try {
             chartData = Object.entries(result[today])
-            .filter(element => element[1] > 0 && element.length > 1)
+            .filter(element => element[1] > 60 && element.length > 1)
             .map(item => ({
             label: extractNameFromURL(item[0]),
             data: item[1],
@@ -222,7 +233,7 @@ function loadChartOfDay(day){
         
 
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
-
+/*
         // show value in center plugin
         const plugin = {
             id: "plugin",
@@ -261,12 +272,17 @@ function loadChartOfDay(day){
                 responsive: true,
                 //remove the legend
                 plugins: {
+                    tooltips: {
+                        enabled: false,
+                        boxWidth: 0,
+                        boxHeight: 0,
+                    },
                     legend: {
                         display: false,
                     },
                     title: {
-                        display: true,
-                        text: `Total time spent on tabs today: ${parseSecondsIntoReadableTime(totalTimeSpent)}`,
+                        display: false,
+                        text: `Total Time: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`,
                     },
                 },
             },
@@ -274,34 +290,59 @@ function loadChartOfDay(day){
         
         // render init block
         const myChart = new Chart(
-            document.getElementById("pieChart"),
+            document.getElementById("chart"),
             config
         );
-        
-/*
+    */    
+
         // create the pie chart
         try {
-            const ctx = document.getElementById("pieChart").getContext("2d");
+            const ctx = document.getElementById("chart").getContext("2d");
 
             new Chart(ctx, {
                 type: "doughnut",
                 data: {
-                    labels: chartData.map(item => `${item.label} (${parseSecondsIntoReadableTime(item.data)})`),
+                    labels: chartData.map(item => `${item.label}`),
                     datasets: [
                         {
                             data: chartData.map(item => item.data),
-                            backgroundColor: chartData.map(item => item.backgroundColor),
+                            //backgroundColor: chartData.map(item => item.backgroundColor),
                         },
                     ],
                 },
                 options: {
-                    
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            boxWidth: 0,
+                            boxHeight: 0,
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + ' seconds';
+                                    }
+                                    return parseSecondsIntoReadableTime(context.parsed).slice(0,-7);
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: false,
+                            text: `Total Time: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`,
+                        },
+                    }
                 },
             });
         } catch (error) {
             console.log("error creating pie chart" + error);
         }
-        */
+        
     });
 
 }
@@ -321,16 +362,8 @@ function formdata() {
         // use `url` here inside the callback because it's asynchronous!
         
     });
-    /*
-    console.log(getTabUrl());
-    addNewBlacklistedSite(getTabUrl());
-    document.getElementById("blacklistInput").value = "";
-    */
-    //var siteURL = document.getElementById("blacklistInput").value;
-    //console.log(document.getElementById("blacklistInput").value);
-    
 }
-
+//reset and print chrome storage
 function resetChromeStorage() {
     chrome.storage.local.clear(function() {
         console.log("cleared chrome storage");
@@ -343,7 +376,37 @@ function resetChromeStorage() {
 if (document.getElementById("resetChromeStorage") != null){
     document.getElementById("resetChromeStorage").onclick = resetChromeStorage;
 }
-
 if (document.getElementById("printChromeStorage") != null){
     document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
+}
+try {
+    const dateElement = document.getElementById('date');
+    const leftButton = document.getElementById('left-button');
+    const rightButton = document.getElementById('right-button');
+
+    // Get today's date
+    let date = new Date();
+    updateDate();
+
+    // Listen for left button click
+    leftButton.addEventListener('click', () => {
+    date.setDate(date.getDate() - 1);
+    updateDate();
+    });
+
+    // Listen for right button click
+    rightButton.addEventListener('click', () => {
+    date.setDate(date.getDate() + 1);
+    updateDate();
+    });
+
+    // Function to update the date on the page
+    function updateDate() {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    dateElement.innerText = `${year}-${month}-${day}`;
+}
+} catch (error) {
+    console.log("error with date element: ", error);
 }

@@ -60,7 +60,7 @@ function updateTimeSpent() {
   // Get the current tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     // If there is a current tab
-    if (tabs[0] && Date.now() - lastRequestTime > 10 * 60 * 1000) { //if idle for longer than 10 minutes, don't update time spent
+    if (tabs[0] && Date.now() - lastRequestTime < 10 * 60 * 1000) { //if idle for longer than 10 minutes, don't update time spent
 
       console.log("tabs[0].url is ", tabs[0].url, "performance is ", performance.now()/1000, "Date.now is ", Date.now()/1000);
       
