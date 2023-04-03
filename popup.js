@@ -165,11 +165,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 
-
-    loadChartOfDay(getTodayDateString());
+    console.log(getTodayDateString());
+    loadChartOfDay(dateElement.innerText);
 });
 
 function loadChartOfDay(day){
+
+    console.log("loading chart of day: ", day);
+    console.log(getTodayDateString());
+    // destroy the previous chart
+    if (window.myChart) {
+        window.myChart.destroy();
+      }
+    
+
     
     // get all of the day records from storage
     chrome.storage.local.get(null, function(result) {
@@ -184,6 +193,10 @@ function loadChartOfDay(day){
         }
 
         console.log("sortedTabRecords: ", sortedTabRecords);
+
+        if (document.getElementById("tabs") != null){
+            document.getElementById("tabs").innerHTML = "";
+        }
 
         // create a row in the table for each tab
         for (const tabRecord of sortedTabRecords) {
@@ -299,7 +312,7 @@ function loadChartOfDay(day){
         try {
             const ctx = document.getElementById("chart").getContext("2d");
 
-            new Chart(ctx, {
+            window.myChart = new Chart(ctx, {
                 type: "doughnut",
                 data: {
                     labels: chartData.map(item => `${item.label}`),
@@ -379,10 +392,15 @@ if (document.getElementById("resetChromeStorage") != null){
 if (document.getElementById("printChromeStorage") != null){
     document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
 }
+
+let dateElement;
+let leftButton;
+let rightButton;
+//date picker
 try {
-    const dateElement = document.getElementById('date');
-    const leftButton = document.getElementById('left-button');
-    const rightButton = document.getElementById('right-button');
+    dateElement = document.getElementById('date');
+    leftButton = document.getElementById('left-button');
+    rightButton = document.getElementById('right-button');
 
     // Get today's date
     let date = new Date();
@@ -392,21 +410,23 @@ try {
     leftButton.addEventListener('click', () => {
     date.setDate(date.getDate() - 1);
     updateDate();
+    loadChartOfDay(dateElement.innerText);
     });
 
     // Listen for right button click
     rightButton.addEventListener('click', () => {
     date.setDate(date.getDate() + 1);
     updateDate();
+    loadChartOfDay(dateElement.innerText);
     });
 
     // Function to update the date on the page
     function updateDate() {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    dateElement.innerText = `${year}-${month}-${day}`;
-}
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        dateElement.innerText = `${year}-${month}-${day}`;
+    }
 } catch (error) {
     console.log("error with date element: ", error);
 }
