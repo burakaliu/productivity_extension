@@ -167,6 +167,12 @@ a:visited, a:link{
   cursor: pointer;
 }
 
+#totalTime{
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px;
+}
+
 .tab-row{
   margin: 3px;
   display: flex;

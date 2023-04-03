@@ -386,11 +386,48 @@ function resetChromeStorage() {
         }
     });
 }
+//fake data
+function fakeData(numTabs, date) {
+    console.log("generating fake data");
+
+    // Get the current date in YYYY-MM-DD format
+    var currentDate = getTodayDateString();
+  
+    for (let i = 0; i < numTabs; i++) {
+      // Create a fake tab URL
+      var fakeUrl = `https://www.fakeurl${i+1}.com`;
+      console.log(fakeUrl);
+  
+      // Get the tab data for the current date from chrome storage
+      chrome.storage.local.get(currentDate, function(result) {
+  
+        // Set the current tab ID and name to the fake values
+  
+        // Generate a random number between 1 and 60 to simulate the time spent on the fake tab
+        var timeSpent = Math.floor(Math.random() * 60) + 10 * 60;
+  
+        var dayData = result[currentDate] || {};
+  
+        // Update the time spent for the fake tab in the day data object
+        dayData[extractNameFromURL(fakeUrl)] = timeSpent;
+  
+        // Store the updated day data object back in chrome storage
+        var data = {};
+        data[currentDate] = dayData;
+        chrome.storage.local.set(data);
+      });
+    }
+  }
+  
 if (document.getElementById("resetChromeStorage") != null){
     document.getElementById("resetChromeStorage").onclick = resetChromeStorage;
 }
 if (document.getElementById("printChromeStorage") != null){
     document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
+}
+if (document.getElementById("fakeData") != null){
+    document.getElementById("fakeData").onclick = function(){fakeData(10, dateElement.innerText)};
+    console.log("running fake data");
 }
 
 let dateElement;
@@ -429,4 +466,19 @@ try {
     }
 } catch (error) {
     console.log("error with date element: ", error);
+}
+
+//total time spent display
+if (document.getElementById("totalTime") != null){
+    chrome.storage.local.get(null, function (data) {
+        let totalTimeSpent = 0;
+        for (let key in data) {
+            if (key != "blacklist") {
+                for (let key2 in data[key]) {
+                    totalTimeSpent += data[key][key2];
+                }
+            }
+        }
+        document.getElementById("totalTime").innerHTML = `Total Time Today: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`;
+    });
 }
