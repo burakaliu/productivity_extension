@@ -283,67 +283,6 @@ function loadChartOfDay(day){
         
 
         const totalTimeSpent = chartData.reduce((sum, item) => sum + item.data, 0);
-/*
-        // show value in center plugin
-        const plugin = {
-            id: "plugin",
-            beforeDraw(chart, args, options){
-                const { ctx, chartArea: {top, right, bottom, left, width, height} } = chart;
-                ctx.save();
-                ctx.fillStyle = "blue";
-                const centerX = (left + right) / 2;
-                const centerY = (top + bottom) / 2;
-                const squareSize = 10;
-                ctx.fillRect(200, 200, 10, 10);
-                ctx.fillRect(centerX - squareSize / 2, centerY - squareSize / 2, squareSize, squareSize);
-                //x0, y0, x1, y1 - x0 = starting point on horizontal level l/r, y0 = starting point on the vertical level t/b, x1 = length of square in pixels horizontal, y1 = length of shape vertical 
-
-            }
-        };
-
-        // data for the chart
-        const data = {
-            labels: chartData.map(item => `${item.label} (${parseSecondsIntoReadableTime(item.data)})`),
-                    datasets: [
-                        {
-                            data: chartData.map(item => item.data),
-                            backgroundColor: chartData.map(item => item.backgroundColor),
-                        },
-                    ],
-        };
-
-        //config for the chart
-        const config = {
-            type: "doughnut",
-            data: data,
-            borderWidth: 2,
-            borderRadius: 50,
-            options: {
-                responsive: true,
-                //remove the legend
-                plugins: {
-                    tooltips: {
-                        enabled: false,
-                        boxWidth: 0,
-                        boxHeight: 0,
-                    },
-                    legend: {
-                        display: false,
-                    },
-                    title: {
-                        display: false,
-                        text: `Total Time: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`,
-                    },
-                },
-            },
-        };
-        
-        // render init block
-        const myChart = new Chart(
-            document.getElementById("chart"),
-            config
-        );
-    */    
 
         // create the pie chart
         try {
