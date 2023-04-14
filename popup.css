@@ -4,10 +4,10 @@ a:visited, a:link{
 }
 
 .container {
-    width: 600px;
+    width: 400px;
     height: auto;
     color: #314d3e;
-    margin: 10px;
+    margin: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,6 +15,7 @@ a:visited, a:link{
 }
 
 .header{
+  width: 100%;
   background-color: #faebd7;
   grid-column: 1/ span 5;
   grid-row: 1;
@@ -63,6 +64,25 @@ a:visited, a:link{
 
 .spacer{
   flex: 2;
+}
+
+#left{
+  flex-grow: 2;
+  padding: 10px;
+  margin: 5px;
+  min-width: 180px;
+  min-height: 300px;
+  border: 3px solid #314d3e;
+  border-radius: 10px;
+}
+#right{
+  flex-grow: 1;
+  padding: 10px;
+  margin: 5px;
+  min-width: 180px;
+  min-height: 300px;
+  border: 3px solid #314d3e;
+  border-radius: 10px;
 }
 
 .page-link:hover{
@@ -195,6 +215,80 @@ a:visited, a:link{
   margin: 5px;
 }
 
+/* POMODORO TIMER */
+
+#pomodoro-controls{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+#countdown {
+  position: static;
+  margin: auto;
+  margin-top: 100px;
+  margin-bottom: 100px;
+  height: fit-content;
+  width: fit-content;
+  text-align: center;
+  display: flex;
+  flex-grow: 1;
+  flex-basis: content;
+  justify-content: center;
+  align-items: center;
+}
+
+
+#countdown-number:before,
+#countdown-number:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+}
+
+#countdown-number:before {
+  left: -20px;
+  border-right: 20px solid #000;
+}
+
+#countdown-number:after {
+  right: -20px;
+  border-left: 20px solid #000;
+}
+
+svg {
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  width: 200px; /* Set the width to the same as the circle's diameter */
+  height: 200px; /* Set the height to the same as the circle's diameter */
+  transform-origin: center;
+  transform: rotateY(-180deg) rotateZ(-90deg);
+}
+
+svg circle {
+  stroke-dasharray: calc(2 * 3.14 * 40px);
+  stroke-dashoffset: 0px;
+  stroke-linecap: round;
+  stroke-width: 10px;
+  stroke: rgb(129, 37, 190);
+  fill: none;
+  animation: countdown 10s linear infinite forwards;
+}
+
+@keyframes countdown {
+  from {
+    stroke-dashoffset: 0px;
+  }
+  to {
+    stroke-dashoffset: calc(2 * 3.14 * 40px);
+  }
+}
   /* The switch - the box around the slider */
 .switch {
   position: relative;

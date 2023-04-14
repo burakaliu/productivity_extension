@@ -41,6 +41,24 @@ if (document.getElementById("checkbox") != null){
         }
     });
 }
+if (document.getElementById("focusMode") != null){
+    document.getElementById("focusMode").addEventListener("click", ()=>{
+        focusMode(getElementById("focusMode").innerText);
+    });
+}
+
+function focusMode(lengthInSeconds){
+    //turn on tab blocker
+    chrome.storage.local.set({"onoff": "on"}, function(){
+        console.log("tab blocker is now on");
+    });
+    setTimeout(() => {
+        //turn off tab blocker after the specified time
+        chrome.storage.local.set({"onoff": "off"}, function(){
+            console.log("tab blocker is now off");
+        }, lengthInSeconds * 1000); //convert to milliseconds
+    });
+}
 
 
 async function addNewBlacklistedSite (url) {
@@ -165,6 +183,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 
+    if (document.getElementById('countdown-number')){
+        var countdownNumberEl = document.getElementById('countdown-number');
+        console.log(countdownNumberEl);
+        var countdown = 10;
+
+        countdownNumberEl.innerHTML = countdown;
+
+        setInterval(function() {
+        countdown = --countdown <= 0 ? 10 : countdown;
+
+        countdownNumberEl.textContent = countdown;
+        }, 1000);
+    }
+    
     console.log(getTodayDateString());
     loadChartOfDay(dateElement.innerText);
 });
