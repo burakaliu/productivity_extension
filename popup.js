@@ -41,11 +41,14 @@ if (document.getElementById("checkbox") != null){
         }
     });
 }
+
 if (document.getElementById("focusModeStart") != null){
     console.log("focusModeElement exists");
     document.getElementById("focusModeStart").addEventListener("click", ()=>{
         console.log("focus mode is called");
-        focusMode(5);
+        var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
+        console.log(timeSelected);
+        focusMode(timeSelected);
     });
 }
 
