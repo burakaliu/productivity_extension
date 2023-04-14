@@ -41,9 +41,11 @@ if (document.getElementById("checkbox") != null){
         }
     });
 }
-if (document.getElementById("focusMode") != null){
-    document.getElementById("focusMode").addEventListener("click", ()=>{
-        focusMode(getElementById("focusMode").innerText);
+if (document.getElementById("focusModeStart") != null){
+    console.log("focusModeElement exists");
+    document.getElementById("focusModeStart").addEventListener("click", ()=>{
+        console.log("focus mode is called");
+        focusMode(5);
     });
 }
 
@@ -54,10 +56,10 @@ function focusMode(lengthInSeconds){
     });
     setTimeout(() => {
         //turn off tab blocker after the specified time
-        chrome.storage.local.set({"onoff": "off"}, function(){
+        chrome.storage.local.set({"onoff": "off"}, async function(){
             console.log("tab blocker is now off");
-        }, lengthInSeconds * 1000); //convert to milliseconds
-    });
+        }); //convert to milliseconds
+    }, (lengthInSeconds * 1000));
 }
 
 
@@ -198,7 +200,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     console.log(getTodayDateString());
-    loadChartOfDay(dateElement.innerText);
+    if(dateElement){
+        loadChartOfDay(dateElement.innerText);
+    }
+    
 });
 
 function loadChartOfDay(day){
