@@ -278,7 +278,7 @@ svg circle {
   stroke-width: 10px;
   stroke: rgb(129, 37, 190);
   fill: none;
-  animation: countdown 10s linear infinite forwards;
+  animation: none;
 }
 
 @keyframes countdown {
@@ -289,6 +289,22 @@ svg circle {
     stroke-dashoffset: calc(2 * 3.14 * 40px);
   }
 }
+
+#focusModeStart{
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s ease-out
+}
+
+#focusModeStart:hover{
+  transform: scale(1.1);
+}
+
+#focusModeStart:active{
+  transform: scale(0.9);
+}
+
+
   /* The switch - the box around the slider */
 .switch {
   position: relative;

@@ -42,28 +42,6 @@ if (document.getElementById("checkbox") != null){
     });
 }
 
-if (document.getElementById("focusModeStart") != null){
-    console.log("focusModeElement exists");
-    document.getElementById("focusModeStart").addEventListener("click", ()=>{
-        console.log("focus mode is called");
-        var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-        console.log(timeSelected);
-        focusMode(timeSelected);
-    });
-}
-
-function focusMode(lengthInSeconds){
-    //turn on tab blocker
-    chrome.storage.local.set({"onoff": "on"}, function(){
-        console.log("tab blocker is now on");
-    });
-    setTimeout(() => {
-        //turn off tab blocker after the specified time
-        chrome.storage.local.set({"onoff": "off"}, async function(){
-            console.log("tab blocker is now off");
-        }); //convert to milliseconds
-    }, (lengthInSeconds * 1000));
-}
 
 
 async function addNewBlacklistedSite (url) {
@@ -188,20 +166,58 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 
-    if (document.getElementById('countdown-number')){
-        var countdownNumberEl = document.getElementById('countdown-number');
-        console.log(countdownNumberEl);
-        var countdown = 10;
-
-        countdownNumberEl.innerHTML = countdown;
-
-        setInterval(function() {
-        countdown = --countdown <= 0 ? 10 : countdown;
-
-        countdownNumberEl.textContent = countdown;
-        }, 1000);
-    }
     
+        
+    if (document.getElementById("focusModeStart") != null){
+        console.log("focusModeElement exists");
+        document.getElementById("focusModeStart").addEventListener("click", ()=>{
+            //disable start button
+            document.getElementById("focusModeStart").disabled = true;
+            document.getElementById("focusModeStart").style.filter = "saturate(50%)";
+            var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
+            //initialize countdown
+            if (document.getElementById('countdown-number')){
+                var countdownNumberEl = document.getElementById('countdown-number');
+                console.log(countdownNumberEl);
+                var countdown = timeSelected;
+        
+                countdownNumberEl.innerHTML = countdown;
+                var countDownInterval = setInterval(function() {
+                    if (countdown > 0) {
+                        countdown--;
+                    }else{
+                        console.log("countdown is 0");
+                        document.getElementById("focusModeStart").disabled = false;
+                        clearInterval(countdownNumber);
+                    }
+            
+                    countdownNumberEl.textContent = countdown;
+
+                }, 1000);
+            }
+            console.log(timeSelected);
+            focusMode(timeSelected);
+        });
+    }
+
+    function focusMode(lengthInSeconds){
+        //start animation
+        let timerCircle = document.getElementById("timerCircle");
+        timerCircle.style.animation = "countdown " + (lengthInSeconds) + "s linear infinite forwards";
+        //turn on tab blocker
+        chrome.storage.local.set({"onoff": "on"}, function(){
+            console.log("tab blocker is now on");
+        });
+        setTimeout(() => {
+            //turn off tab blocker after the specified time
+            chrome.storage.local.set({"onoff": "off"}, async function(){
+                console.log("tab blocker is now off");
+                //stop animation
+                timerCircle.style.animation = "none";
+            }); 
+        }, (lengthInSeconds * 1000));//convert to milliseconds
+    }
+        
     console.log(getTodayDateString());
     if(dateElement){
         loadChartOfDay(dateElement.innerText);
@@ -365,48 +381,12 @@ function resetChromeStorage() {
         }
     });
 }
-//fake data
-function fakeData(numTabs, date) {
-    console.log("generating fake data");
 
-    // Get the current date in YYYY-MM-DD format
-    var currentDate = getTodayDateString();
-  
-    for (let i = 0; i < numTabs; i++) {
-      // Create a fake tab URL
-      var fakeUrl = `https://www.fakeurl${i+1}.com`;
-      console.log(fakeUrl);
-  
-      // Get the tab data for the current date from chrome storage
-      chrome.storage.local.get(currentDate, function(result) {
-  
-        // Set the current tab ID and name to the fake values
-  
-        // Generate a random number between 1 and 60 to simulate the time spent on the fake tab
-        var timeSpent = Math.floor(Math.random() * 60) + 10 * 60;
-  
-        var dayData = result[currentDate] || {};
-  
-        // Update the time spent for the fake tab in the day data object
-        dayData[extractNameFromURL(fakeUrl)] = timeSpent;
-  
-        // Store the updated day data object back in chrome storage
-        var data = {};
-        data[currentDate] = dayData;
-        chrome.storage.local.set(data);
-      });
-    }
-  }
-  
 if (document.getElementById("resetChromeStorage") != null){
     document.getElementById("resetChromeStorage").onclick = resetChromeStorage;
 }
 if (document.getElementById("printChromeStorage") != null){
     document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
-}
-if (document.getElementById("fakeData") != null){
-    document.getElementById("fakeData").onclick = function(){fakeData(10, dateElement.innerText)};
-    console.log("running fake data");
 }
 
 let dateElement;
