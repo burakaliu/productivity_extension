@@ -293,7 +293,8 @@ svg circle {
 #focusModeStart{
   width: 30px;
   height: 30px;
-  transition: transform 0.3s ease-out
+  transition: transform 0.3s ease-out;
+  filter: saturate(100%);
 }
 
 #focusModeStart:hover{

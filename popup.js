@@ -167,36 +167,42 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("blsiteadder").onclick = formdata;
     } 
     
-        
+    let pomodoroON = false;
     if (document.getElementById("focusModeStart") != null){
         console.log("focusModeElement exists");
         document.getElementById("focusModeStart").addEventListener("click", ()=>{
-            //disable start button
-            document.getElementById("focusModeStart").disabled = true;
-            document.getElementById("focusModeStart").style.filter = "saturate(50%)";
-            var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-            //initialize countdown
-            if (document.getElementById('countdown-number')){
-                var countdownNumberEl = document.getElementById('countdown-number');
-                console.log(countdownNumberEl);
-                var countdown = timeSelected;
-        
-                countdownNumberEl.innerHTML = countdown;
-                var countDownInterval = setInterval(function() {
-                    if (countdown > 0) {
-                        countdown--;
-                    }else{
-                        console.log("countdown is 0");
-                        document.getElementById("focusModeStart").disabled = false;
-                        clearInterval(countdownNumber);
-                    }
+            if (!pomodoroON){
+                pomodoroON = true;
+                //disable start button
+                document.getElementById("focusModeStart").disabled = true;
+                document.getElementById("focusModeStart").style.filter = "saturate(10%)";
+                document.getElementById("focusModeStart").style.transform = "scale(0.9)";
+                var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
+                //initialize countdown
+                if (document.getElementById('countdown-number')){
+                    var countdownNumberEl = document.getElementById('countdown-number');
+                    console.log(countdownNumberEl);
+                    var countdown = timeSelected;
             
-                    countdownNumberEl.textContent = countdown;
+                    countdownNumberEl.innerHTML = countdown;
+                    var countDownInterval = setInterval(function() {
+                        if (countdown > 0) {
+                            countdown--;
+                        }else{
+                            console.log("countdown is 0");
+                            document.getElementById("focusModeStart").disabled = false;
+                            document.getElementById("focusModeStart").style.filter = "saturate(100%)";
+                            document.getElementById("focusModeStart").style.transform = "none";
+                            clearInterval(countDownInterval);
+                        }
+                
+                        countdownNumberEl.textContent = countdown;
 
-                }, 1000);
+                    }, 1000);
+                }
+                console.log(timeSelected);
+                focusMode(timeSelected);
             }
-            console.log(timeSelected);
-            focusMode(timeSelected);
         });
     }
 
@@ -214,6 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("tab blocker is now off");
                 //stop animation
                 timerCircle.style.animation = "none";
+                pomodoroON = false;
             }); 
         }, (lengthInSeconds * 1000));//convert to milliseconds
     }
