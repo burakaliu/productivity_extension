@@ -280,6 +280,7 @@ svg circle {
   stroke: rgb(129, 37, 190);
   fill: none;
   animation: none;
+  animation-delay: -2s;
 }
 
 @keyframes countdown {

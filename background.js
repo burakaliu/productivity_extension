@@ -88,6 +88,38 @@ function updateTimeSpent() {
   });
 }
 
+let pomodoroID;
+let pomodoroTime;
+let timerStatus;
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.cmd === 'START_TIMER') {
+    timerStatus = "on";
+    console.log("starting timer");
+    pomodoroTime = request.length;
+    pomodoroID = setInterval(function() {
+      if (pomodoroTime > 0) {
+          pomodoroTime--;
+      }else{
+          console.log("countdown is 0");
+          timerStatus = "off";
+          sendResponse({ cmd: 'finished' });
+          clearInterval(pomodoroID); 
+      }
+    }, 1000);
+  } else if (request.cmd === 'GET_TIME') {
+    console.log("getting time: ", pomodoroTime, " from background.js");
+    if (pomodoroTime) {
+      sendResponse({ time: pomodoroTime });
+    }else{
+      sendResponse({ time: 40 });
+    }
+  } else if(request.cmd === 'GET_STATUS'){
+    console.log("getting status: ", timerStatus, " from background.js");
+    sendResponse(timerStatus);
+  }
+});
+
 function getTodayDateString(){
   const today = new Date();
   const year = today.getFullYear();

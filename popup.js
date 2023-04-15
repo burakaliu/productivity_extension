@@ -6,7 +6,7 @@ import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractName
 chrome.storage.local.get(["onoff"], (result) => {
     console.log(result.onoff);
     try{
-        result.onoff == "on" ? document.getElementById("checkbox").checked = true : document.getElementById("checkbox").checked = false;
+        result.onoff == "off" ? document.getElementById("checkbox").checked = false : document.getElementById("checkbox").checked = true;
     }catch(error){
         console.log("error: " + error);
     }
@@ -26,14 +26,18 @@ chrome.storage.local.get(["list"], (result) => {
         }
     }
 });
+
+
 if (document.getElementById("checkbox") != null){
-    /* change the on/off status of the blacklisting program in the chrome storage*/
+    //hange the on/off status of the blacklisting program in the chrome storage
     document.getElementById("checkbox").addEventListener("click", ()=>{
         //console.log("clicked on slider");
         if (document.getElementById("checkbox").checked) {
+            /*
             chrome.storage.local.set({"onoff": "on"}, function(){
                 console.log("tab blocker is now on");
             });
+            */
         } else {
             chrome.storage.local.set({"onoff": "off"}, function(){
                 console.log("tab blocker is now off");
@@ -42,7 +46,89 @@ if (document.getElementById("checkbox") != null){
     });
 }
 
+chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
+    if (response) {
+        console.log("recieved status: ", response, " now setting the status on the popup");
+        chrome.storage.local.set({"onoff": response}, function(){
+            console.log("tab blocker is now" + response);
+        });
+    }
+});
 
+
+// Call this when the pop-up is shown to update the time displayed
+chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
+    if (response.time) {
+        console.log("recieved time: ", response.time, " ---- now setting the time on the popup");
+        var countdownNumber = document.getElementById('countdown-number');
+        var timeSelected = (document.getElementById("selectedTime") != null ? (response.time) : 90);
+        countdownNumber ? (countdownNumber.textContent = response.time) : console.log("countdownNumber: ", countdownNumber);
+        chrome.storage.local.get(["onoff"], (result) => {
+            console.log("tab blocker is: " + result.onoff);
+            if (result.onoff == "on"){
+                startTimer(timeSelected);
+            }else{
+                console.log("tab blocker is: " + result.onoff);
+            }
+        });
+    }
+});
+
+//this listens for when the timer is finished
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.cmd === 'finished') {
+        document.getElementById("focusModeStart").disabled = false;
+        document.getElementById("focusModeStart").style.filter = "saturate(100%)";
+        document.getElementById("focusModeStart").style.transform = "none";
+        //turn off tab blocker
+        chrome.storage.local.set({"onoff": "off"}, function(){
+            console.log("tab blocker is now off line 86");
+        });
+    }else{
+        console.log("request.cmd is not finished idk why this is being called");
+    }
+});
+  
+function startTimer(time) {
+    if (time) {
+        var countdownNumberEl = document.getElementById('countdown-number');
+        console.log(countdownNumberEl);
+        var countdown = time;
+
+        //set animation position
+        let timerCircle = document.getElementById("timerCircle");
+        let timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
+        if (timerCircle) {
+            timerCircle.style.animation = "countdown " + (timeSelected) + "s linear infinite forwards";
+            timerCircle ? timerCircle.style.animationDelay = (countdownNumberEl - timeSelected) + "s" : console.log("timerCircle: ", timerCircle);
+        }
+
+        countdownNumberEl ? countdownNumberEl.innerHTML = countdown : console.log("countdownNumberEl: ", countdownNumberEl);
+        var countDownInterval = setInterval(function() {
+            if (countdown > 0) {
+                countdown--;
+                //console.log(countdown);
+            }else{
+                console.log("countdown is 0");
+                document.getElementById("focusModeStart").disabled = false;
+                document.getElementById("focusModeStart").style.filter = "saturate(100%)";
+                document.getElementById("focusModeStart").style.transform = "none";
+                clearInterval(countDownInterval);
+                chrome.storage.local.set({"onoff": "off"}, function(){
+                    console.log("tab blocker is now off line 115");
+                });
+            }
+    
+            countdownNumberEl.textContent = countdown;
+
+        }, 1000);
+    }
+}
+
+function startTime(time) {
+    chrome.runtime.sendMessage({ cmd: 'START_TIMER', length: time });
+    startTimer(time);
+}
 
 async function addNewBlacklistedSite (url) {
 
@@ -185,25 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
                 //initialize countdown
                 if (document.getElementById('countdown-number')){
-                    var countdownNumberEl = document.getElementById('countdown-number');
-                    console.log(countdownNumberEl);
-                    var countdown = timeSelected;
-            
-                    countdownNumberEl.innerHTML = countdown;
-                    var countDownInterval = setInterval(function() {
-                        if (countdown > 0) {
-                            countdown--;
-                        }else{
-                            console.log("countdown is 0");
-                            document.getElementById("focusModeStart").disabled = false;
-                            document.getElementById("focusModeStart").style.filter = "saturate(100%)";
-                            document.getElementById("focusModeStart").style.transform = "none";
-                            clearInterval(countDownInterval);
-                        }
-                
-                        countdownNumberEl.textContent = countdown;
-
-                    }, 1000);
+                    startTime(timeSelected);
                 }
                 console.log(timeSelected);
                 focusMode(timeSelected);
@@ -222,7 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
             //turn off tab blocker after the specified time
             chrome.storage.local.set({"onoff": "off"}, async function(){
-                console.log("tab blocker is now off");
+                console.log("tab blocker is now off after timer is done");
                 //stop animation
                 timerCircle.style.animation = "none";
                 pomodoroON = false;
