@@ -241,14 +241,15 @@ a:visited, a:link{
 }
 
 
-#countdown-number:before,
-#countdown-number:after {
+#countdown-number{
   position: absolute;
   content: "";
-  width: 0;
-  height: 0;
+  width: fit-content;
+  height: fit-content;
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
+  font-size: 50px;
+  font-weight: bolder;
 }
 
 #countdown-number:before {

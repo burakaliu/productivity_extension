@@ -166,6 +166,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 
+    if (document.getElementById("selectedTime") != null){
+        document.getElementById("selectedTime").addEventListener("change", ()=>{
+            document.getElementById("countdown-number").textContent = document.getElementById("selectedTime").value + ":00";
+        });
+    }
     
     let pomodoroON = false;
     if (document.getElementById("focusModeStart") != null){
