@@ -53,6 +53,24 @@ chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
             console.log("tab blocker is now" + response);
         });
     }
+    if (response == "off"){
+        try {
+            document.getElementById("focusModeStart").disabled = false;
+            document.getElementById("focusModeStart").style.filter = "saturate(100%)";
+            document.getElementById("focusModeStart").style.transform = "none";
+            document.getElementById("timerCircle").style.animation = "none";
+        } catch (error) {
+            console.log("error probably on wrong html page: " + error);
+        }
+    }else if (response == "on"){
+        try {
+            document.getElementById("focusModeStart").disabled = true;
+            document.getElementById("focusModeStart").style.filter = "saturate(10%)";
+            document.getElementById("focusModeStart").style.transform = "scale(0.9)";
+        } catch (error) {
+            console.log("error probably on wrong html page: " + error);
+        }
+    }
 });
 
 
@@ -80,9 +98,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         document.getElementById("focusModeStart").disabled = false;
         document.getElementById("focusModeStart").style.filter = "saturate(100%)";
         document.getElementById("focusModeStart").style.transform = "none";
+        document.getElementById("timerCircle").style.setProperty("animation", "none");
+        console.log("request.cmd is finished and this is timerCircle: ", document.getElementById("timerCircle").style);
         //turn off tab blocker
         chrome.storage.local.set({"onoff": "off"}, function(){
-            console.log("tab blocker is now off line 86");
+            console.log("tab blocker is now off line");
         });
     }else{
         console.log("request.cmd is not finished idk why this is being called");
@@ -98,10 +118,14 @@ function startTimer(time) {
         //set animation position
         let timerCircle = document.getElementById("timerCircle");
         let timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-        if (timerCircle) {
-            timerCircle.style.animation = "countdown " + (timeSelected) + "s linear infinite forwards";
-            timerCircle ? timerCircle.style.animationDelay = (countdownNumberEl - timeSelected) + "s" : console.log("timerCircle: ", timerCircle);
+        try {
+            timerCircle.style.animation = (timeSelected) + linear + " -2s  infinite forwards";
+            timerCircle.style.animationDelay = (countdownNumberEl - timeSelected) + "s";
+            console.log("timerCircle animation is changed to reflect new values after opening again", timerCircle);
+        } catch (error) {
+            console.log("error: " + error);
         }
+        
 
         countdownNumberEl ? countdownNumberEl.innerHTML = countdown : console.log("countdownNumberEl: ", countdownNumberEl);
         var countDownInterval = setInterval(function() {
@@ -113,6 +137,7 @@ function startTimer(time) {
                 document.getElementById("focusModeStart").disabled = false;
                 document.getElementById("focusModeStart").style.filter = "saturate(100%)";
                 document.getElementById("focusModeStart").style.transform = "none";
+                document.getElementById("timerCircle").style.animation = "none";
                 clearInterval(countDownInterval);
                 chrome.storage.local.set({"onoff": "off"}, function(){
                     console.log("tab blocker is now off line 115");
@@ -282,7 +307,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function focusMode(lengthInSeconds){
         //start animation
         let timerCircle = document.getElementById("timerCircle");
-        timerCircle.style.animation = "countdown " + (lengthInSeconds) + "s linear infinite forwards";
+        //timerCircle.style.setProperty("animation", "countdown " + (lengthInSeconds) + "s linear infinite forwards");
+        //timerCircle.style.setProperty("animation-delay", (document.getElementById("selectedTime").value + "s"));
+        
         //turn on tab blocker
         chrome.storage.local.set({"onoff": "on"}, function(){
             console.log("tab blocker is now on");
@@ -292,7 +319,8 @@ document.addEventListener("DOMContentLoaded", function () {
             chrome.storage.local.set({"onoff": "off"}, async function(){
                 console.log("tab blocker is now off after timer is done");
                 //stop animation
-                timerCircle.style.animation = "none";
+                timerCircle.style.setProperty("animation", "none");
+                console.log(timerCircle.style.animation);
                 pomodoroON = false;
             }); 
         }, (lengthInSeconds * 1000));//convert to milliseconds
