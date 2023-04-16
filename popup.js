@@ -108,23 +108,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("request.cmd is not finished idk why this is being called");
     }
 });
-  
+console.log(location.href.split("/").slice(-1)[0]);
 function startTimer(time) {
-    if (time) {
+    if (time && location.href.split("/").slice(-1)[0] == "blacklistPage.html") {
         var countdownNumberEl = document.getElementById('countdown-number');
+        var countdownNumberValue = document.getElementById('countdown-number').innerHTML;
         console.log(countdownNumberEl);
         var countdown = time;
 
         //set animation position
         let timerCircle = document.getElementById("timerCircle");
         let timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-        try {
-            timerCircle.style.animation = (timeSelected) + linear + " -2s  infinite forwards";
-            timerCircle.style.animationDelay = (countdownNumberEl - timeSelected) + "s";
-            console.log("timerCircle animation is changed to reflect new values after opening again", timerCircle);
-        } catch (error) {
-            console.log("error: " + error);
-        }
+        chrome.storage.local.get(["timerLength"], (result) => {
+            console.log(result.timerLength);
+            let timerLength = (result.timerLength != null ? result.timerLength : [90]);
+            try {
+                timerCircle.style.animation = "countdown " + timerLength + "s linear infinite forwards";
+                timerCircle.style.setProperty("animation-delay", "-" + (timerLength - time) + "s");
+                console.log(timerCircle.style.animationDelay);
+                console.log("timeselected: ", timerLength + "time: ", time, "sub: ", timerLength - time);
+                console.log("timerCircle animation is changed to reflect new values after opening again", timerCircle);
+            } catch (error) {
+                console.log("error: " + error);
+            }
+        });
+        
+        
         
 
         countdownNumberEl ? countdownNumberEl.innerHTML = countdown : console.log("countdownNumberEl: ", countdownNumberEl);
@@ -152,6 +161,9 @@ function startTimer(time) {
 
 function startTime(time) {
     chrome.runtime.sendMessage({ cmd: 'START_TIMER', length: time });
+    chrome.storage.local.set({"timerLength": time}, function(){
+        console.log("timer length in chrome storage is now " + time);
+    });
     startTimer(time);
 }
 
@@ -319,8 +331,9 @@ document.addEventListener("DOMContentLoaded", function () {
             chrome.storage.local.set({"onoff": "off"}, async function(){
                 console.log("tab blocker is now off after timer is done");
                 //stop animation
+                console.log("before: ", timerCircle.style.animation);
                 timerCircle.style.setProperty("animation", "none");
-                console.log(timerCircle.style.animation);
+                console.log("after: ", timerCircle.style.animation);
                 pomodoroON = false;
             }); 
         }, (lengthInSeconds * 1000));//convert to milliseconds
