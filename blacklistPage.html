@@ -6,7 +6,6 @@
       <h1 class="big-title"> Webber </h1>
       <p class="small-text"> uncover your online habits </p>
       <a class= "page-link"  href="./popup.html">home</a>
-      <div class = "spacer"></div>
       <!--<a class="page-link" href="./tracker.html">tracker</a>-->
       <a class= "page-link active" href="./blacklistPage.html" >blacklist</a>
     </div>
@@ -20,9 +19,9 @@
           </div>
           <div id="pomodoro-controls">
             <form class="dropdown">
-              <label for="length">length:</label>
+              <img src="/assets/play.png" id="focusModeStart" alt="start" width="30" height="30">
+              <label id="pomodoro-length-label" for="length">Length</label>
               <select name="time" id="selectedTime">
-                <option value="0.1">0.1</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="30">30</option>
@@ -34,12 +33,18 @@
                 <option value="90">90</option>
               </select>
               <br><br>
-              <img src="/assets/play.png" id="focusModeStart" alt="start" width="30" height="30">
             </form>
         </div>
       </div>
       <div class="half" id="right">
-        second half
+        <div id="add-blsite-title-container">
+          <div id="add-blsite-title">
+            Add this page
+          </div>
+          <img id="blsiteadder" src="/assets/plus.png" alt="add button" width="20" height="20">
+        </div>
+        
+        <div class="blsites" id="blsites"></div>
       </div>
     </div>
     <div  class="flex-row">
@@ -49,12 +54,8 @@
           <input type="checkbox" id="checkbox">
           <span class="slider round"></span>
         </label>
-    
-        <div class="title" id="title1">Your blacklisted sites</div>
-        <button id="blsiteadder">add this site</button>
       </div>
       <div class="sites-list"> 
-        <div class="blsites" id="blsites"></div>
       </div>
     </div>
     

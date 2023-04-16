@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (pomodoroTime) {
       sendResponse({ time: pomodoroTime });
     }else{
-      sendResponse({ time: 40 });
+      sendResponse({ time: 30*60 });
     }
   } else if(request.cmd === 'GET_STATUS'){
     console.log("getting status: ", timerStatus, " from background.js");

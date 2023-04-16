@@ -222,7 +222,7 @@ a:visited, a:link{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 10px;
+  margin: 2px;
 }
 
 #countdown {
@@ -250,16 +250,6 @@ a:visited, a:link{
   border-bottom: 20px solid transparent;
   font-size: 50px;
   font-weight: bolder;
-}
-
-#countdown-number:before {
-  left: -20px;
-  border-right: 20px solid #000;
-}
-
-#countdown-number:after {
-  right: -20px;
-  border-left: 20px solid #000;
 }
 
 svg {
@@ -293,6 +283,7 @@ svg circle {
 }
 
 #focusModeStart{
+  padding: 5px;
   width: 30px;
   height: 30px;
   transition: transform 0.3s ease-out;
@@ -305,6 +296,41 @@ svg circle {
 
 #focusModeStart:active{
   transform: scale(0.9);
+}
+
+.dropdown{
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;;
+}
+
+#pomodoro-length-label{
+  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 5px;
+}
+
+/* Blacklisted site adder */
+#add-blsite-title-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 2px;
+}
+#add-blsite-title{
+  font-size: 20px;
+  font-weight: bold;
+  margin: 5px;
+}
+
+#blsiteadder{
+  width: 20px;
+  height: 20px;
+  margin: 5px;
 }
 
 

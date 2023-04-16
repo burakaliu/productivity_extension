@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, parseMillisecondsIntoReadableTime} from "./utils.js";
+import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, parseMillisecondsIntoReadableTime, formatTime} from "./utils.js";
 
 /* make sure that the current state of the slider is consistent with the value in storage*/
 chrome.storage.local.get(["onoff"], (result) => {
@@ -55,6 +55,7 @@ chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     }
     if (response == "off"){
         try {
+            document.getElementById("selectedTime").disabled = false;
             document.getElementById("focusModeStart").disabled = false;
             document.getElementById("focusModeStart").style.filter = "saturate(100%)";
             document.getElementById("focusModeStart").style.transform = "none";
@@ -65,6 +66,7 @@ chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     }else if (response == "on"){
         try {
             document.getElementById("focusModeStart").disabled = true;
+            document.getElementById("selectedTime").disabled = true;
             document.getElementById("focusModeStart").style.filter = "saturate(10%)";
             document.getElementById("focusModeStart").style.transform = "scale(0.9)";
         } catch (error) {
@@ -80,7 +82,7 @@ chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
         console.log("recieved time: ", response.time, " ---- now setting the time on the popup");
         var countdownNumber = document.getElementById('countdown-number');
         var timeSelected = (document.getElementById("selectedTime") != null ? (response.time) : 90);
-        countdownNumber ? (countdownNumber.textContent = response.time) : console.log("countdownNumber: ", countdownNumber);
+        countdownNumber ? (countdownNumber.textContent = formatTime(response.time)) : console.log("countdownNumber: ", countdownNumber);
         chrome.storage.local.get(["onoff"], (result) => {
             console.log("tab blocker is: " + result.onoff);
             if (result.onoff == "on"){
@@ -96,6 +98,7 @@ chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.cmd === 'finished') {
         document.getElementById("focusModeStart").disabled = false;
+        document.getElementById("selectedTime").disabled = false;
         document.getElementById("focusModeStart").style.filter = "saturate(100%)";
         document.getElementById("focusModeStart").style.transform = "none";
         document.getElementById("timerCircle").style.setProperty("animation", "none");
@@ -136,7 +139,7 @@ function startTimer(time) {
         
         
 
-        countdownNumberEl ? countdownNumberEl.innerHTML = countdown : console.log("countdownNumberEl: ", countdownNumberEl);
+        countdownNumberEl ? countdownNumberEl.innerHTML = formatTime(countdown) : console.log("countdownNumberEl: ", countdownNumberEl);
         var countDownInterval = setInterval(function() {
             if (countdown > 0) {
                 countdown--;
@@ -144,6 +147,7 @@ function startTimer(time) {
             }else{
                 console.log("countdown is 0");
                 document.getElementById("focusModeStart").disabled = false;
+                document.getElementById("selectedTime").disabled = false;
                 document.getElementById("focusModeStart").style.filter = "saturate(100%)";
                 document.getElementById("focusModeStart").style.transform = "none";
                 document.getElementById("timerCircle").style.animation = "none";
@@ -153,7 +157,7 @@ function startTimer(time) {
                 });
             }
     
-            countdownNumberEl.textContent = countdown;
+            countdownNumberEl.textContent = formatTime(countdown);
 
         }, 1000);
     }
@@ -303,6 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 pomodoroON = true;
                 //disable start button
                 document.getElementById("focusModeStart").disabled = true;
+                document.getElementById("selectedTime").disabled = true;
                 document.getElementById("focusModeStart").style.filter = "saturate(10%)";
                 document.getElementById("focusModeStart").style.transform = "scale(0.9)";
                 var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);

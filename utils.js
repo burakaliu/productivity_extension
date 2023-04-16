@@ -114,4 +114,20 @@ export const getTodayDateString = () => {
     const day = today.getDate();
     return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 }
+
+export const formatTime = (seconds) => {
+    var minutes = Math.floor(seconds / 60);
+    var remainingSeconds = seconds % 60;
+  
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+  
+    if (remainingSeconds < 10) {
+      remainingSeconds = "0" + remainingSeconds;
+    }
+  
+    return minutes + ":" + remainingSeconds;
+}
+  
   
