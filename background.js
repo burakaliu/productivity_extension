@@ -103,6 +103,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }else{
           console.log("countdown is 0");
           timerStatus = "off";
+          alert("Time's up!");
           sendResponse({ cmd: 'finished' });
           clearInterval(pomodoroID); 
       }

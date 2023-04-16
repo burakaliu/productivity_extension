@@ -492,7 +492,6 @@ function formdata() {
         let url = tabs[0].url;
         console.log("adding site to blacklist: ", url);
         addNewBlacklistedSite(url);
-        document.getElementById("blacklistInput").value = "";
         // use `url` here inside the callback because it's asynchronous!
         
     });

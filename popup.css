@@ -118,19 +118,21 @@ a:visited, a:link{
 }
 
 .blsites {
+  display: flex;
+  flex-direction: column;;
   border: 3px solid #314d3e;
   border-radius: 10px;
   font-size: 20px;
   padding: 5px;
   margin: 2px;
+  align-items: left;
+  justify-content: left;
 }
-
 .blacklisted{
   display: flex;
   flex-direction: row;
   font-size: 15px;
-  text-align: center;
-  margin: auto;
+  margin: 5px;
 }
 
 .blsite-delete {
@@ -194,8 +196,10 @@ a:visited, a:link{
 }
 
 .tab-row{
+  text-align: center;
   margin: 3px;
   display: flex;
+  align-items: center;
   -ms-flex-align: center;
 }
 
@@ -205,6 +209,7 @@ a:visited, a:link{
 }
 
 .tab-url{
+  text-align: center;
   font-size: 15px;
   font-weight: bold;
   margin: 5px;
