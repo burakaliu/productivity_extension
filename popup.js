@@ -347,6 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(getTodayDateString());
     if(dateElement){
         loadChartOfDay(dateElement.innerText);
+        getTotalTimeOfToday(dateElement.innerText);
     }
     
 });
@@ -532,6 +533,7 @@ try {
     date.setDate(date.getDate() - 1);
     updateDate();
     loadChartOfDay(dateElement.innerText);
+    getTotalTimeOfToday(dateElement.innerText);
     });
 
     // Listen for right button click
@@ -539,6 +541,7 @@ try {
     date.setDate(date.getDate() + 1);
     updateDate();
     loadChartOfDay(dateElement.innerText);
+    getTotalTimeOfToday(dateElement.innerText);
     });
 
     // Function to update the date on the page
@@ -552,17 +555,21 @@ try {
     console.log("error with date element: ", error);
 }
 
-//total time spent display
-if (document.getElementById("totalTime") != null){
-    chrome.storage.local.get(null, function (data) {
-        let totalTimeSpent = 0;
-        for (let key in data) {
-            if (key != "blacklist") {
-                for (let key2 in data[key]) {
-                    totalTimeSpent += data[key][key2];
+function getTotalTimeOfToday(date){
+    //total time spent display
+    if (document.getElementById("totalTime") != null){
+        chrome.storage.local.get(null, function (data) {
+            let totalTimeSpent = 0;
+            for (let key in data) {
+                if (key == date) {
+                    for (let key2 in data[key]) {
+                        totalTimeSpent += data[key][key2];
+                    }
                 }
             }
-        }
-        document.getElementById("totalTime").innerHTML = `Total Time Today: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`;
-    });
+            console.log("total time spent: ", totalTimeSpent);
+            document.getElementById("totalTime").innerHTML = `Total Time Today: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`;
+        });
+    }
 }
+
