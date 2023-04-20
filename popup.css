@@ -16,7 +16,6 @@ a:visited, a:link{
 
 .header{
   width: 100%;
-  background-color: #faebd7;
   grid-column: 1/ span 5;
   grid-row: 1;
   font-size: 30px;
@@ -28,24 +27,28 @@ a:visited, a:link{
   display: flex;
   gap: 10px;
   flex-basis: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .small-text{
-  font-size: 15px;
-  width: 100px;
+  font-size: 10px;
   font-weight: bold;
-  padding: 5px;  
+  padding: 0px;  
+  margin: 0px;
+  padding: 0px;
+}
+
+.name{
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
+  flex-direction: column;
 }
 
 .big-title{
-  padding: 10px;
-  margin: 10px;
-  margin-right: 0;
-  padding-right: 0px;
+  margin: 0px;
+  padding: 0px;
   font-size: 30px;
+  text-align: bottom;
 }
 
 .page-link{
@@ -62,6 +65,78 @@ a:visited, a:link{
   flex: 1;
 }
 
+
+.active{ /*the page that is active gets this link color*/
+  color: #66afe9;
+}
+
+.page-link {
+  appearance: button;
+  background-color: #1899D6;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  margin: 0;
+  outline: none;
+  overflow: visible;
+  padding: 13px 19px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  height: fit-content;
+  flex: 1;
+  max-width: fit-content;
+ }
+ 
+ .page-link:after {
+  background-clip: padding-box;
+  background-color: #1CB0F6;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+ }
+ 
+ .page-link:main, .page-link:focus {
+  user-select: auto;
+ }
+ 
+ .page-link:hover:not(:disabled) {
+  filter: brightness(1.1);
+ }
+ 
+ .page-link:disabled {
+  cursor: auto;
+ }
+ 
+ .page-link:active:after {
+  border-width: 0 0 0px;
+ }
+ 
+ .page-link:active {
+  padding-bottom: 10px;
+ }
+
 .spacer{
   flex: 2;
 }
@@ -72,7 +147,7 @@ a:visited, a:link{
   margin: 5px;
   min-width: 180px;
   min-height: 300px;
-  border: 3px solid #314d3e;
+  border: 0px solid #314d3e;
   border-radius: 10px;
 }
 #right{
@@ -81,17 +156,10 @@ a:visited, a:link{
   margin: 5px;
   min-width: 180px;
   min-height: 300px;
-  border: 3px solid #314d3e;
+  border: 0px solid #314d3e;
   border-radius: 10px;
 }
 
-.page-link:hover{
-  font-size: 21px;
-}
-
-.active{ /*the page that is active gets this link color*/
-  color: #66afe9;
-}
 
 .flex-row{
   display: flex;
