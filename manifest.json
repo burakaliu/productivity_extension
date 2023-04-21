@@ -2,7 +2,7 @@
     "name": "productivity extension",
     "version": "0.0.2",
     "description": "a productivity extension that helps you to save your time by preventing procastination",
-    "permissions": ["storage", "tabs", "activeTab", "idle", "webRequest"],
+    "permissions": ["storage", "tabs", "activeTab", "idle"],
     "host_permissions": ["https://*/*"],
     "background": {
       "service_worker": "./background.js"
