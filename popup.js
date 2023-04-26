@@ -2,19 +2,8 @@
 
 import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, parseMillisecondsIntoReadableTime, formatTime} from "./utils.js";
 
-/* make sure that the current state of the slider is consistent with the value in storage*/
-chrome.storage.local.get(["onoff"], (result) => {
-    console.log(result.onoff);
-    try{
-        result.onoff == "off" ? document.getElementById("checkbox").checked = false : document.getElementById("checkbox").checked = true;
-    }catch(error){
-        console.log("error: " + error);
-    }
-});
-
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
 /* basically just loading the list of blocked sites */
-
 chrome.storage.local.get(["list"], (result) => { 
     //console.log(result.list);
     if (result.list == null){
@@ -27,24 +16,6 @@ chrome.storage.local.get(["list"], (result) => {
     }
 });
 
-
-if (document.getElementById("checkbox") != null){
-    //hange the on/off status of the blacklisting program in the chrome storage
-    document.getElementById("checkbox").addEventListener("click", ()=>{
-        //console.log("clicked on slider");
-        if (document.getElementById("checkbox").checked) {
-            /*
-            chrome.storage.local.set({"onoff": "on"}, function(){
-                console.log("tab blocker is now on");
-            });
-            */
-        } else {
-            chrome.storage.local.set({"onoff": "off"}, function(){
-                console.log("tab blocker is now off");
-            });
-        }
-    });
-}
 
 chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     if (response) {
@@ -111,7 +82,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("request.cmd is not finished idk why this is being called");
     }
 });
+
 console.log(location.href.split("/").slice(-1)[0]);
+
+/* 
+*
+*
+*/
 function startTimer(time) {
     if (time && location.href.split("/").slice(-1)[0] == "blacklistPage.html") {
         var countdownNumberEl = document.getElementById('countdown-number');
@@ -163,6 +140,8 @@ function startTimer(time) {
     }
 }
 
+//calls startTimer(time) after changing timer length in chrome storage
+//sometimes the time in storage is already right so startTimer can be called directly
 function startTime(time) {
     chrome.runtime.sendMessage({ cmd: 'START_TIMER', length: time });
     chrome.storage.local.set({"timerLength": time}, function(){
@@ -285,7 +264,7 @@ function addOldBlacklistedSite (url) {
     }  
 }
 
-//new link submitted
+//when all content on page is loaded
 document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("submit") != null){
         document.getElementById("submit").onclick = formdata;
@@ -302,9 +281,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let pomodoroON = false;
     if (document.getElementById("focusModeStart") != null){
         console.log("focusModeElement exists");
-        document.getElementById("focusModeStart").addEventListener("click", ()=>{
+        document.getElementById("focusModeStart").addEventListener("click", function() {
             if (!pomodoroON){
                 pomodoroON = true;
+                console.log("this shoudl not be running at the beginning");
                 //disable start button
                 document.getElementById("focusModeStart").disabled = true;
                 document.getElementById("selectedTime").disabled = true;
@@ -320,8 +300,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
+    //set tab blocker on
+    //set a timer to turn off tab blocker after timer is over
     function focusMode(lengthInSeconds){
+        console.log("focus mode started");
         //start animation
         let timerCircle = document.getElementById("timerCircle");
         //timerCircle.style.setProperty("animation", "countdown " + (lengthInSeconds) + "s linear infinite forwards");
