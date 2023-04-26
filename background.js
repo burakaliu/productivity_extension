@@ -74,6 +74,8 @@ function updateTimeSpent() {
         }
 
         // Increment the time spent variable with the elapsed time, converted to seconds
+        //if tab is the same this get incremented 1
+        //if tab is different it is reset to 0 above
         timeSpent += 1;
 
         var dayData = result[currentDate] || {};
