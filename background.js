@@ -1,12 +1,15 @@
 //dormant until an event the file is listening for fires, react with specified instructions, then unload.
 // background.js
 
-let activeTabUrl = null;
-let ignoredURLs = ["chrome://newtab","chrome://newtab/", "chrome://extensions/", "chrome://settings/"];
+//set timer off when first loaded because i cant find where the problem is and this is the easiest solution so far
+chrome.runtime.onInstalled.addListener(function(details) {
+  if (details.reason == 'install' || details.reason == 'update') {
+    chrome.storage.local.set({"onoff": "off"}, function(){
+      console.log("tab blocker is OFFFF");
+    });
+  }
+});
 
-
-// initialize an object to store tab URLs
-const tabUrls = {};
 
 // initialize the last active time
 let lastActiveTime = performance.now();
@@ -104,6 +107,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           pomodoroTime--;
       }else{
           console.log("countdown is 0");
+          chrome.notifications.create('test', {
+            type: 'basic',
+            iconUrl: "/assets/ext-icon.png",
+            title: 'Timer is up!',
+            message: 'Your timer has ended. You can take a break now!',
+            priority: 2
+          });
           timerStatus = "off";
           sendResponse({ cmd: 'finished' });
           clearInterval(pomodoroID); 
