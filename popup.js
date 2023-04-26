@@ -82,7 +82,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("request.cmd is not finished idk why this is being called");
     }
 });
+
 console.log(location.href.split("/").slice(-1)[0]);
+
+/* 
+*
+*
+*/
 function startTimer(time) {
     if (time && location.href.split("/").slice(-1)[0] == "blacklistPage.html") {
         var countdownNumberEl = document.getElementById('countdown-number');
@@ -134,6 +140,8 @@ function startTimer(time) {
     }
 }
 
+//calls startTimer(time) after changing timer length in chrome storage
+//sometimes the time in storage is already right so startTimer can be called directly
 function startTime(time) {
     chrome.runtime.sendMessage({ cmd: 'START_TIMER', length: time });
     chrome.storage.local.set({"timerLength": time}, function(){
@@ -256,7 +264,7 @@ function addOldBlacklistedSite (url) {
     }  
 }
 
-//new link submitted
+//when all content on page is loaded
 document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("submit") != null){
         document.getElementById("submit").onclick = formdata;
@@ -273,9 +281,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let pomodoroON = false;
     if (document.getElementById("focusModeStart") != null){
         console.log("focusModeElement exists");
-        document.getElementById("focusModeStart").addEventListener("click", ()=>{
+        document.getElementById("focusModeStart").addEventListener("click", function() {
             if (!pomodoroON){
                 pomodoroON = true;
+                console.log("this shoudl not be running at the beginning");
                 //disable start button
                 document.getElementById("focusModeStart").disabled = true;
                 document.getElementById("selectedTime").disabled = true;
@@ -291,7 +300,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
+    //set tab blocker on
+    //set a timer to turn off tab blocker after timer is over
     function focusMode(lengthInSeconds){
         console.log("focus mode started");
         //start animation
