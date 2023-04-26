@@ -2,19 +2,8 @@
 
 import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, parseMillisecondsIntoReadableTime, formatTime} from "./utils.js";
 
-/* make sure that the current state of the slider is consistent with the value in storage*/
-chrome.storage.local.get(["onoff"], (result) => {
-    console.log(result.onoff);
-    try{
-        result.onoff == "off" ? document.getElementById("checkbox").checked = false : document.getElementById("checkbox").checked = true;
-    }catch(error){
-        console.log("error: " + error);
-    }
-});
-
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
 /* basically just loading the list of blocked sites */
-
 chrome.storage.local.get(["list"], (result) => { 
     //console.log(result.list);
     if (result.list == null){
@@ -27,24 +16,6 @@ chrome.storage.local.get(["list"], (result) => {
     }
 });
 
-
-if (document.getElementById("checkbox") != null){
-    //hange the on/off status of the blacklisting program in the chrome storage
-    document.getElementById("checkbox").addEventListener("click", ()=>{
-        //console.log("clicked on slider");
-        if (document.getElementById("checkbox").checked) {
-            /*
-            chrome.storage.local.set({"onoff": "on"}, function(){
-                console.log("tab blocker is now on");
-            });
-            */
-        } else {
-            chrome.storage.local.set({"onoff": "off"}, function(){
-                console.log("tab blocker is now off");
-            });
-        }
-    });
-}
 
 chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     if (response) {
@@ -322,6 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function focusMode(lengthInSeconds){
+        console.log("focus mode started");
         //start animation
         let timerCircle = document.getElementById("timerCircle");
         //timerCircle.style.setProperty("animation", "countdown " + (lengthInSeconds) + "s linear infinite forwards");
