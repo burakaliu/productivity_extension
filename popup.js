@@ -379,6 +379,7 @@ function loadChartOfDay(day){
                 timeSpentCell.className = "tab-time-spent";
 
                 urlCell.textContent = tabRecord[0];
+                //grab official icon of site but if it does not exist, use default icon
                 icon.src = `https://www.${urlCell.textContent}/favicon.ico`;
                 icon.addEventListener("error", () => {
                     icon.src = "/assets/default.png"; // replace with URL of default icon
