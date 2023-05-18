@@ -6,10 +6,9 @@ License MIT
 Krobit is a powerful Chrome extension designed to help users combat procrastination, enhance time management skills, and cultivate healthy study habits. By offering a range of intuitive features and customizable options, this extension aims to create a focused and productive digital environment for students and professionals alike.
 
 ## Features
-Website Blocking: Prevents access to time-wasting websites and social media platforms, allowing users to stay focused on their tasks.
-Pomodoro Timer: Incorporates the Pomodoro Technique to boost productivity, utilizing timed work intervals and breaks for optimal performance.
-Customizable Blacklist: Allows users to whitelist specific websites or apps that are essential for their work or study, granting access during blocked periods.
-Motivational Quotes: Displays inspirational quotes and messages to encourage and motivate users during their study or work sessions.
+ - Website Blocking: Prevents access to time-wasting websites and social media platforms, allowing users to stay focused on their tasks.
+ - Pomodoro Timer: Incorporates the Pomodoro Technique to boost productivity, utilizing timed work intervals and breaks for optimal performance.
+ - Customizable Blacklist: Allows users to whitelist specific websites or apps that are essential for their work or study, granting access during blocked periods.
 
 ## Installation
 To install the ProcrastiBlock Chrome extension, follow these steps:
