@@ -7,8 +7,6 @@ Krobit is a powerful Chrome extension designed to help users combat procrastinat
 
 ## Features
 Website Blocking: Prevents access to time-wasting websites and social media platforms, allowing users to stay focused on their tasks.
-Scheduled Blocking: Schedule specific time slots for website blocking to align with study or work sessions, ensuring undisturbed concentration.
-Productivity Tracker: Provides insightful statistics and analytics on browsing habits, enabling users to monitor their progress and identify areas for improvement.
 Pomodoro Timer: Incorporates the Pomodoro Technique to boost productivity, utilizing timed work intervals and breaks for optimal performance.
 Customizable Blacklist: Allows users to whitelist specific websites or apps that are essential for their work or study, granting access during blocked periods.
 Motivational Quotes: Displays inspirational quotes and messages to encourage and motivate users during their study or work sessions.
