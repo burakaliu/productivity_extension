@@ -11,15 +11,17 @@ Krobit is a powerful Chrome extension designed to help users combat procrastinat
  - Customizable Blacklist: Allows users to whitelist specific websites or apps that are essential for their work or study, granting access during blocked periods.
 
 ## Installation
-To install the ProcrastiBlock Chrome extension, follow these steps:
+To install the Krobit Chrome extension, follow these steps:
 
-Clone or download this repository.
-Open Google Chrome and navigate to chrome://extensions.
-Enable the "Developer Mode" toggle on the top right corner of the page.
-Click on the "Load unpacked" button and select the cloned/downloaded repository folder.
-The ProcrastiBlock extension will now be installed and ready to use.
-Usage
-Once installed, ProcrastiBlock provides a seamless and user-friendly experience. Simply access the extension icon in your Chrome toolbar to access the various features and settings. Customize the blocking options, set study or work sessions, and monitor your progress through the productivity tracker.
+1. Clone or download this repository.
+2. Open Google Chrome and navigate to chrome://extensions.
+3. Enable the "Developer Mode" toggle on the top right corner of the page.
+4. Click on the "Load unpacked" button and select the cloned/downloaded repository folder.
+5. The Krobit extension will now be installed and ready to use.
+
+
+## Usage
+Once installed, Krobit provides a seamless and user-friendly experience. Simply access the extension icon in your Chrome toolbar to access the various features and settings. Customize the blocking options, set study or work sessions, and monitor your progress through the productivity tracker.
 
 ## Contributing
 Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request. Let's work together to make ProcrastiBlock even better.
