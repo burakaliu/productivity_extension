@@ -253,6 +253,132 @@ opacity: 0.8;
 }
 </style>`;
 };
+const generateHTML2 = () => {
+    return `<div class="stars-wrapper">
+	<h1>get back to work</h1>
+  <svg class="stars" width="100%" height="100%" preserveAspectRatio="none">
+    <circle class="star"></circle>
+    <!-- repeat the circle element 200 times with different properties -->
+  </svg>
+  <svg class="stars" width="100%" height="100%" preserveAspectRatio="none">
+    <circle class="star"></circle>
+    <!-- repeat the circle element 200 times with different properties -->
+  </svg>
+  <svg class="stars" width="100%" height="100%" preserveAspectRatio="none">
+    <circle class="star"></circle>
+    <!-- repeat the circle element 200 times with different properties -->
+  </svg>
+  <svg class="extras" width="100%" height="100%" preserveAspectRatio="none">
+    <defs>
+      <radialGradient id="comet-gradient" cx="0" cy="0.5" r="0.5">
+        <stop offset="0%" stop-color="rgba(255,255,255,.8)"></stop>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"></stop>
+      </radialGradient>
+    </defs>
+    <g transform="rotate(-135)">
+      <ellipse class="comet comet-a" fill="url(#comet-gradient)" cx="0" cy="0" rx="150" ry="2"></ellipse>
+    </g>
+    <g transform="rotate(20)">
+      <ellipse class="comet comet-b" fill="url(#comet-gradient)" cx="100%" cy="0" rx="150" ry="2"></ellipse>
+    </g>
+    <g transform="rotate(300)">
+      <ellipse class="comet comet-c" fill="url(#comet-gradient)" cx="40%" cy="100%" rx="150" ry="2"></ellipse>
+    </g>
+  </svg>
+  }
+`;
+};
+const generateSTYLING2 = () => {
+    return `
+    :root {
+      --twinkle-duration: 4s;
+    }
+    
+    .stars-wrapper {
+      position: relative;
+      pointer-events: none;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(#16161d, #1f1f3a, #3b2f4a);
+      overflow: hidden;
+    }
+    
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    
+    .star {
+      fill: white;
+      animation: twinkle var(--twinkle-duration) ease-in-out infinite;
+    }
+    
+    @keyframes twinkle {
+      25% {
+        opacity: 0;
+      }
+    }
+    
+    .comet {
+      transform-origin: center center;
+      animation: comet 10s linear infinite;
+    
+      @keyframes comet {
+        0%,
+        40% {
+          transform: translateX(0);
+          opacity: 0;
+        }
+    
+        50% {
+          opacity: 1;
+        }
+    
+        60%,
+        100% {
+          transform: translateX(-100vmax);
+          opacity: 0;
+        }
+      }
+    }
+    
+    .comet-b {
+      animation-delay: -3.3s;
+    }
+    
+    .comet-c {
+      animation-delay: -5s;
+    }
+    
+    /* Additional styling */
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Montserrat ", sans-serif;
+      color: white;
+    }
+    
+    h1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      text-align: center;
+      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+    }
+    
+    p {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+    }
+    `;
+};
 
 const getName = (link) => {
     let a = link.slice(8);
@@ -277,7 +403,18 @@ chrome.storage.local.get(["onoff"], (result) => {
         }
     });
 });
-
+/*
+//TERMPORARY CODE FOR BLOCKING ALL WEBSITES SELECTED IN THE LIST
+chrome.storage.local.get(["list"], (r) => {
+    console.log("the thing on the list: " + r.list);
+    for (let i = 0; i < r.list.length; i++){
+        if (getName(window.location.href) == getName(r.list[i])){
+            document.body.innerHTML = generateHTML2();
+            document.head.innerHTML = generateSTYLING2();
+        }
+    }
+});
+*/
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         //console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
