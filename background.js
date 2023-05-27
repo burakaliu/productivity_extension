@@ -10,6 +10,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
   }
 });
 
+//stores wether the user is idle or not
+let isIdle = false;
 
 // initialize the last active time
 let lastActiveTime = performance.now();
@@ -40,17 +42,6 @@ function stopTimer() {
 startTimer(); // start the timer when the extension is loaded
 
 
-//to track wether the user is idle or not
-let lastRequestTime = Date.now();
-
-chrome.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    lastRequestTime = Date.now();
-  },
-  { urls: ["<all_urls>"] }
-);
-
-
 // Function to update the time spent on the current tab
 function updateTimeSpent() {
 
@@ -63,7 +54,7 @@ function updateTimeSpent() {
   // Get the current tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     // If there is a current tab
-    if (tabs[0] && Date.now() - lastRequestTime < 10 * 60 * 1000) { //if idle for longer than 10 minutes, don't update time spent
+    if (tabs[0] && !isIdle) { 
 
       //console.log("tabs[0].url is ", tabs[0].url, "performance is ", performance.now()/1000, "Date.now is ", Date.now()/1000);
       
@@ -131,6 +122,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse(timerStatus);
   }
 });
+
+//to track wether the user is idle or not
+chrome.idle.onStateChanged.addListener(function (state) {
+  if (state === "idle") {
+    console.log("User is idle");
+    isIdle = true;
+  } else if (state === "active") {
+    console.log("User is active");
+    isIdle = false;
+  }
+});
+
 
 function getTodayDateString(){
   const today = new Date();

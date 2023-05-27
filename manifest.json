@@ -2,7 +2,7 @@
     "name": "Krobit",
     "version": "0.0.2",
     "description": "A productivity extension that helps you to save your time by preventing procastination",
-    "permissions": ["storage", "tabs", "webRequest", "notifications"],
+    "permissions": ["storage", "tabs", "notifications", "idle"],
     "host_permissions": ["https://*/*"],
     "background": {
       "service_worker": "./background.js"
