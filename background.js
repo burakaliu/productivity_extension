@@ -1,6 +1,17 @@
 //dormant until an event the file is listening for fires, react with specified instructions, then unload.
 // background.js
 
+//when the icon is clicked open the options page 
+chrome.action.onClicked.addListener(function(tab) {
+  console.log("icon clicked");
+  chrome.tabs.create({
+    url: "home.html"
+  });
+});
+
+
+
+
 //set timer off when first loaded because i cant find where the problem is and this is the easiest solution so far
 chrome.runtime.onInstalled.addListener(function(details) {
   if (details.reason == 'install' || details.reason == 'update') {

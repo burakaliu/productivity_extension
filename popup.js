@@ -16,6 +16,12 @@ chrome.storage.local.get(["list"], (result) => {
     }
 });
 
+//open new tab page if the user clicks on home button
+if (document.getElementById("home") != null){
+    document.getElementById("home").addEventListener("click", function(){
+        chrome.tabs.create({url: "popup.html"});
+    });
+}
 
 chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     if (response) {
@@ -82,8 +88,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("request.cmd is not finished idk why this is being called");
     }
 });
-
-console.log(location.href.split("/").slice(-1)[0]);
 
 /* 
 *
