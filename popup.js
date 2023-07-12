@@ -1,6 +1,7 @@
 //script for popup.html page
 
 import {getName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, formatTime} from "./utils.js";
+import {addNewBlacklistedSite, addOldBlacklistedSite} from "./blacklister.js";
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
 /* basically just loading the list of blocked sites */
@@ -148,120 +149,6 @@ function startTime(time) {
         console.log("timer length in chrome storage is now " + time);
     });
     startTimer(time);
-}
-
-async function addNewBlacklistedSite (url) {
-
-    if (url.length > 1){
-
-        /* making the actual html object */
-        const newblsite = document.createElement("div");
-        const deleteIMG = document.createElement("img");
-        const urlName = getName(url);
-
-        //controlsElement.className = "blsite-controls";
-
-        newblsite.className = "blacklisted";
-        newblsite.id = "blacklisted-" + urlName;
-        newblsite.textContent = urlName;
-        newblsite.setAttribute("url", url);
-
-        deleteIMG.src = "assets/delete.png";
-        deleteIMG.title = "delete";
-        deleteIMG.className = "blsite-delete";
-        deleteIMG.height = 20;
-        deleteIMG.width = 20;
-        deleteIMG.addEventListener("click", ()=> {
-            //console.log("clicked the delete button");
-            chrome.storage.local.remove(urlName, () => {
-                //console.log("tab blocker is now off for " + urlName);
-                //console.log("blacklisted-" + urlName);
-                document.getElementById("blacklisted-" + urlName).remove();
-                //console.log("removed blacklisted tab");
-            });
-            chrome.storage.local.get(["list"], (result) => {
-                let newList = [];
-                for (let i = 0; i < result.list.length; i ++){
-                    if (result.list[i] != url){
-                        newList.push(result.list[i]);
-                    }else{
-                        //console.log("removed " + url + " from list in chrome storage");
-                    }
-                }
-                chrome.storage.local.set({list: newList}, function(){
-                    //console.log( url + " is now removed from storage and the list is added back to storage");
-                });
-            });
-        });
-
-        newblsite.appendChild(deleteIMG);
-        document.getElementById("blsites").appendChild(newblsite);
-
-        chrome.storage.local.get(["list"], (result) => {
-            let newList = [];
-            if (result.list != null){
-                for (let i = 0; i < result.list.length; i ++){
-                    newList.push(result.list[i]);
-                }
-            }
-            newList.push(url);
-            chrome.storage.local.set({list: newList}, function(){
-                //console.log( urlName + " is now added to storage");
-            });
-        });
-        
-    }  
-}
-
-function addOldBlacklistedSite (url) {
-    
-    if (url.length > 1){
-
-        /* making the actual html object */
-        const newblsite = document.createElement("div");
-        const deleteIMG = document.createElement("img");
-        const urlName = getName(url);
-
-        newblsite.className = "blacklisted";
-        newblsite.id = "blacklisted-" + urlName;
-        newblsite.textContent = urlName;
-        newblsite.setAttribute("url", url);
-
-        deleteIMG.src = "assets/delete.png";
-        deleteIMG.title = "delete";
-        deleteIMG.className = "blsite-delete";
-        deleteIMG.height = 20;
-        deleteIMG.width = 20;
-        deleteIMG.addEventListener("click", ()=> {
-            //console.log("clicked the delete button");
-            chrome.storage.local.remove(urlName, () => {
-                //console.log("tab blocker is now off for " + urlName);
-                //console.log("blacklisted-" + urlName);
-                document.getElementById("blacklisted-" + urlName).remove();
-                //console.log("removed blacklisted tab");
-            });
-            chrome.storage.local.get(["list"], (result) => {
-                let newList = [];
-                for (let i = 0; i < result.list.length; i ++){
-                    if (result.list[i] != url){
-                        newList.push(result.list[i]);
-                    }else{
-                        //console.log("removed " + url + " from list in chrome storage");
-                    }
-                }
-                chrome.storage.local.set({list: newList}, function(){
-                    //console.log( url + " is now removed from storage and the list is added back to storage");
-                });
-            });
-        });
-        
-        newblsite.appendChild(deleteIMG);
-        try{
-            document.getElementById("blsites").appendChild(newblsite);
-        }catch{
-            console.log("error adding old blacklisted site");
-        }
-    }  
 }
 
 //when all content on page is loaded
@@ -491,9 +378,11 @@ function resetChromeStorage() {
     });
 }
 
+//check wether reset chrome storage button exists
 if (document.getElementById("resetChromeStorage") != null){
     document.getElementById("resetChromeStorage").onclick = resetChromeStorage;
 }
+//check if print chrome storage button exists
 if (document.getElementById("printChromeStorage") != null){
     document.getElementById("printChromeStorage").onclick = function(){chrome.storage.local.get(null, function (data) { console.info("all of chrome storage", data) })};
 }

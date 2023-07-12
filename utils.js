@@ -1,14 +1,4 @@
 
-
-export const getName = (link) => {
-    if (!link) {
-        return '';
-    }
-    let a = link.slice(8);
-    a.includes("www") ? a = a.slice(4) : a;
-    a = a.substring(0, a.indexOf("/"));
-    return a;
-}
 export const extractNameFromURL = (url) => {
   const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
   const match = urlRegex.exec(url);
@@ -65,5 +55,15 @@ export const formatTime = (seconds) => {
   
     return minutes + ":" + remainingSeconds;
 }
-  
+
+
+export const getName = (link) => {
+  if (!link) {
+      return '';
+  }
+  let a = link.slice(8);
+  a.includes("www") ? a = a.slice(4) : a;
+  a = a.substring(0, a.indexOf("/"));
+  return a;
+}
   
