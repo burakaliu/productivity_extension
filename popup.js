@@ -1,6 +1,6 @@
 //script for popup.html page
 
-import { getCurrentTab, getName, getTabUrl, getHomeURL, getHostName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, parseMillisecondsIntoReadableTime, formatTime} from "./utils.js";
+import {getName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, formatTime} from "./utils.js";
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
 /* basically just loading the list of blocked sites */
@@ -89,10 +89,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-/* 
-*
-*
-*/
 function startTimer(time) {
     if (time && location.href.split("/").slice(-1)[0] == "blacklistPage.html") {
         var countdownNumberEl = document.getElementById('countdown-number');
