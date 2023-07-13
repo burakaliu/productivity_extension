@@ -1,7 +1,7 @@
 //script for popup.html page
 
-import {getName, extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, formatTime} from "./utils.js";
-import {addNewBlacklistedSite, addOldBlacklistedSite} from "./blacklister.js";
+import {extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString} from "./utils.js";
+import {addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, updateTimer, listenForTimerEnd, startTime} from "./blacklister.js";
 
 /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
 /* basically just loading the list of blocked sites */
@@ -23,7 +23,7 @@ if (document.getElementById("home") != null){
         chrome.tabs.create({url: "popup.html"});
     });
 }
-
+/*
 chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
     if (response) {
         console.log("recieved status: ", response, " now setting the status on the popup");
@@ -89,67 +89,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("request.cmd is not finished idk why this is being called");
     }
 });
+*/
+//blacklister timer functions
+statusUpdate();
+updateTimer();
+listenForTimerEnd();
 
-function startTimer(time) {
-    if (time && location.href.split("/").slice(-1)[0] == "blacklistPage.html") {
-        var countdownNumberEl = document.getElementById('countdown-number');
-        var countdownNumberValue = document.getElementById('countdown-number').innerHTML;
-        console.log(countdownNumberEl);
-        var countdown = time;
 
-        //set animation position
-        let timerCircle = document.getElementById("timerCircle");
-        let timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-        chrome.storage.local.get(["timerLength"], (result) => {
-            console.log(result.timerLength);
-            let timerLength = (result.timerLength != null ? result.timerLength : [90]);
-            try {
-                timerCircle.style.animation = "countdown " + timerLength + "s linear infinite forwards";
-                timerCircle.style.setProperty("animation-delay", "-" + (timerLength - time) + "s");
-                console.log(timerCircle.style.animationDelay);
-                console.log("timeselected: ", timerLength + "time: ", time, "sub: ", timerLength - time);
-                console.log("timerCircle animation is changed to reflect new values after opening again", timerCircle);
-            } catch (error) {
-                console.log("error: " + error);
-            }
-        });
-        
-        
-        
 
-        countdownNumberEl ? countdownNumberEl.innerHTML = formatTime(countdown) : console.log("countdownNumberEl: ", countdownNumberEl);
-        var countDownInterval = setInterval(function() {
-            if (countdown > 0) {
-                countdown--;
-                //console.log(countdown);
-            }else{
-                console.log("countdown is 0");
-                document.getElementById("focusModeStart").disabled = false;
-                document.getElementById("selectedTime").disabled = false;
-                document.getElementById("focusModeStart").style.filter = "saturate(100%)";
-                document.getElementById("focusModeStart").style.transform = "none";
-                document.getElementById("timerCircle").style.animation = "none";
-                clearInterval(countDownInterval);
-                chrome.storage.local.set({"onoff": "off"}, function(){
-                    console.log("tab blocker is now off line 115");
-                });
-            }
-    
-            countdownNumberEl.textContent = formatTime(countdown);
 
-        }, 1000);
-    }
-}
-
-//calls startTimer(time) after changing timer length in chrome storage
-//sometimes the time in storage is already right so startTimer can be called directly
-function startTime(time) {
-    chrome.runtime.sendMessage({ cmd: 'START_TIMER', length: time });
-    chrome.storage.local.set({"timerLength": time}, function(){
-        console.log("timer length in chrome storage is now " + time);
-    });
-    startTimer(time);
-}
 
 //when all content on page is loaded
 document.addEventListener("DOMContentLoaded", function () {
