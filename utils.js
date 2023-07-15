@@ -100,4 +100,11 @@ export const getName = (link) => {
   a = a.substring(0, a.indexOf("/"));
   return a;
 }
+
+export const getFaviconUrl = (url) => {
+  const protocol = /^https?:\/\//i;
+  const hostname = url.replace(protocol, '');
+  return `https://www.google.com/s2/favicons?domain=${hostname}`;
+};
+
   
