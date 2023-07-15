@@ -1,9 +1,44 @@
+//reset and print chrome storage 
+export function resetChromeStorage() {
+    chrome.storage.local.clear(function() {
+        console.log("cleared chrome storage");
+        var error = chrome.runtime.lastError;
+        if (error) {
+            console.error(error);
+        }
+    });
+}
+
+//
+export function getTotalTimeOfToday(date){
+    //total time spent display
+    if (document.getElementById("totalTime") != null){
+      chrome.storage.local.get(null, function (data) {
+          let totalTimeSpent = 0;
+          for (let key in data) {
+              if (key == date) {
+                  for (let key2 in data[key]) {
+                      totalTimeSpent += data[key][key2];
+                  }
+              }
+          }
+          console.log("total time spent: ", totalTimeSpent);
+          document.getElementById("totalTime").innerHTML = `Total Time Today: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`;
+      });
+  }
+}
+
+//chose a random color
+export function randomColor() {
+  return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+}
 
 export const extractNameFromURL = (url) => {
   const urlRegex = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/i;
   const match = urlRegex.exec(url);
   return (match ? match[1] : "").toString();
 }
+
 /* USE THIS TO CLEAR STORAGE */
 export const clearStorage = () => {
     chrome.storage.local.clear(function() {
@@ -55,7 +90,6 @@ export const formatTime = (seconds) => {
   
     return minutes + ":" + remainingSeconds;
 }
-
 
 export const getName = (link) => {
   if (!link) {

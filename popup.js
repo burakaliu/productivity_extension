@@ -1,7 +1,7 @@
 //script for popup.html page
 
-import {extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString} from "./utils.js";
-import {addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, updateTimer, listenForTimerEnd, startTime, loadOldBlacklistedSitesFromStorage} from "./blacklister.js";
+import {extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString, resetChromeStorage, getTotalTimeOfToday, randomColor} from "./utils.js";
+import {timerLogic, addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, updateTimer, listenForTimerEnd, startTime, loadOldBlacklistedSitesFromStorage, formdata} from "./blacklister.js";
 
 //open new tab page if the user clicks on home button
 if (document.getElementById("home") != null){
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 
+    
     //if selectedTime exists, watch it for time selection changes
     if (document.getElementById("selectedTime") != null){
         document.getElementById("selectedTime").addEventListener("change", ()=>{
@@ -29,52 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     
-    let pomodoroON = false;
-    if (document.getElementById("focusModeStart") != null){
-        console.log("focusModeElement exists");
-        document.getElementById("focusModeStart").addEventListener("click", function() {
-            if (!pomodoroON){
-                pomodoroON = true;
-                console.log("this shoudl not be running at the beginning");
-                //disable start button
-                document.getElementById("focusModeStart").disabled = true;
-                document.getElementById("selectedTime").disabled = true;
-                document.getElementById("focusModeStart").style.filter = "saturate(10%)";
-                document.getElementById("focusModeStart").style.transform = "scale(0.9)";
-                var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
-                //initialize countdown
-                if (document.getElementById('countdown-number')){
-                    startTime(timeSelected);
-                }
-                console.log(timeSelected);
-                //set tab blocker on
-                //set a timer to turn off tab blocker after timer is over
-                console.log("focus mode started");
-                //start animation
-                let timerCircle = document.getElementById("timerCircle");
-                //timerCircle.style.setProperty("animation", "countdown " + (lengthInSeconds) + "s linear infinite forwards");
-                //timerCircle.style.setProperty("animation-delay", (document.getElementById("selectedTime").value + "s"));
-                
-                //turn on tab blocker
-                chrome.storage.local.set({"onoff": "on"}, function(){
-                    console.log("tab blocker is now on");
-                });
-                setTimeout(() => {
-                    //turn off tab blocker after the specified time
-                    chrome.storage.local.set({"onoff": "off"}, async function(){
-                        console.log("tab blocker is now off after timer is done");
-                        //stop animation
-                        console.log("before: ", timerCircle.style.animation);
-                        timerCircle.style.setProperty("animation", "none");
-                        console.log("after: ", timerCircle.style.animation);
-                        pomodoroON = false;
-                    }); 
-                }, (timeSelected * 1000));//convert to milliseconds
-            }
-        });
-    }
+    timerLogic();
         
-    //console.log(getTodayDateString());
     if(dateElement){
         loadChartOfDay(dateElement.innerText);
         getTotalTimeOfToday(dateElement.innerText);
@@ -213,31 +170,6 @@ function loadChartOfDay(day){
 
 }
 
-function randomColor() {
-    return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-}
-
-function formdata() {
-    
-    // use `url` here inside the callback because it's asynchronous!
-    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-        let url = tabs[0].url;
-        console.log("adding site to blacklist: ", url);
-        addNewBlacklistedSite(url);
-        // use `url` here inside the callback because it's asynchronous!
-        
-    });
-}
-//reset and print chrome storage
-function resetChromeStorage() {
-    chrome.storage.local.clear(function() {
-        console.log("cleared chrome storage");
-        var error = chrome.runtime.lastError;
-        if (error) {
-            console.error(error);
-        }
-    });
-}
 
 //check wether reset chrome storage button exists
 if (document.getElementById("resetChromeStorage") != null){
@@ -288,21 +220,5 @@ try {
     console.log("error with date element: ", error);
 }
 
-function getTotalTimeOfToday(date){
-    //total time spent display
-    if (document.getElementById("totalTime") != null){
-        chrome.storage.local.get(null, function (data) {
-            let totalTimeSpent = 0;
-            for (let key in data) {
-                if (key == date) {
-                    for (let key2 in data[key]) {
-                        totalTimeSpent += data[key][key2];
-                    }
-                }
-            }
-            console.log("total time spent: ", totalTimeSpent);
-            document.getElementById("totalTime").innerHTML = `Total Time Today: ${parseSecondsIntoReadableTime(totalTimeSpent).slice(0,-7)}`;
-        });
-    }
-}
+
 

@@ -269,3 +269,59 @@ export function startTime(time) {
     startTimer(time);
 }
     
+export function formdata() {
+    //this is called when the user clicks on the add button and it adds the site to the blacklist
+    // use `url` here inside the callback because it's asynchronous!
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        let url = tabs[0].url;
+        addNewBlacklistedSite(url);
+    });
+}
+
+//just moved everything from popup.js to here
+export function timerLogic(){
+    let pomodoroON = false;
+    if (document.getElementById("focusModeStart") != null){
+        console.log("focusModeElement exists");
+        document.getElementById("focusModeStart").addEventListener("click", function() {
+            if (!pomodoroON){
+                pomodoroON = true;
+                console.log("this shoudl not be running at the beginning");
+                //disable start button
+                document.getElementById("focusModeStart").disabled = true;
+                document.getElementById("selectedTime").disabled = true;
+                document.getElementById("focusModeStart").style.filter = "saturate(10%)";
+                document.getElementById("focusModeStart").style.transform = "scale(0.9)";
+                var timeSelected = (document.getElementById("selectedTime") != null ? (document.getElementById("selectedTime").value * 60) : 90);
+                //initialize countdown
+                if (document.getElementById('countdown-number')){
+                    startTime(timeSelected);
+                }
+                console.log(timeSelected);
+                //set tab blocker on
+                //set a timer to turn off tab blocker after timer is over
+                console.log("focus mode started");
+                //start animation
+                let timerCircle = document.getElementById("timerCircle");
+                //timerCircle.style.setProperty("animation", "countdown " + (lengthInSeconds) + "s linear infinite forwards");
+                //timerCircle.style.setProperty("animation-delay", (document.getElementById("selectedTime").value + "s"));
+                
+                //turn on tab blocker
+                chrome.storage.local.set({"onoff": "on"}, function(){
+                    console.log("tab blocker is now on");
+                });
+                setTimeout(() => {
+                    //turn off tab blocker after the specified time
+                    chrome.storage.local.set({"onoff": "off"}, async function(){
+                        console.log("tab blocker is now off after timer is done");
+                        //stop animation
+                        console.log("before: ", timerCircle.style.animation);
+                        timerCircle.style.setProperty("animation", "none");
+                        console.log("after: ", timerCircle.style.animation);
+                        pomodoroON = false;
+                    }); 
+                }, (timeSelected * 1000));//convert to milliseconds
+            }
+        });
+    }
+}
