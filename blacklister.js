@@ -1,5 +1,21 @@
 import {getName, formatTime} from "./utils.js";
 
+export function loadOldBlacklistedSitesFromStorage(){
+    /* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
+    /* basically just loading the list of blocked sites */
+    chrome.storage.local.get(["list"], (result) => { 
+        //console.log(result.list); 
+        if (result.list == null){
+            console.log("nothing in chrome data index 'list'");
+        }else{
+            for (let i = 0; i < result.list.length; i ++){
+                addOldBlacklistedSite(result.list[i]);
+                //console.log(result.list[i] + "is now on the popup ");
+            }
+        }
+    });
+}
+
 // adds a new blacklisted site to the list of blacklisted sites
 export async function addNewBlacklistedSite(url) { 
 
@@ -243,7 +259,6 @@ function startTimer(time) {
 
 //calls startTimer(time) after changing timer length in chrome storage
 //sometimes the time in storage is already right so startTimer can be called directly
-
 //Initiates the timer by sending a message to the background script, storing the time value, 
 //and starting the countdown using startTimer(time).
 export function startTime(time) {

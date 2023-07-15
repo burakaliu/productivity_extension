@@ -1,21 +1,7 @@
 //script for popup.html page
 
 import {extractNameFromURL, parseSecondsIntoReadableTime, getTodayDateString} from "./utils.js";
-import {addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, updateTimer, listenForTimerEnd, startTime} from "./blacklister.js";
-
-/* make sure the lsit of blacklisted sites is consistent with the ones in storage */ 
-/* basically just loading the list of blocked sites */
-chrome.storage.local.get(["list"], (result) => { 
-    //console.log(result.list);
-    if (result.list == null){
-        console.log("nothing in chrome data index 'list'");
-    }else{
-        for (let i = 0; i < result.list.length; i ++){
-            addOldBlacklistedSite(result.list[i]);
-            //console.log(result.list[i] + "is now on the popup ");
-        }
-    }
-});
+import {addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, updateTimer, listenForTimerEnd, startTime, loadOldBlacklistedSitesFromStorage} from "./blacklister.js";
 
 //open new tab page if the user clicks on home button
 if (document.getElementById("home") != null){
@@ -23,87 +9,20 @@ if (document.getElementById("home") != null){
         chrome.tabs.create({url: "popup.html"});
     });
 }
-/*
-chrome.runtime.sendMessage({ cmd: 'GET_STATUS' }, response => {
-    if (response) {
-        console.log("recieved status: ", response, " now setting the status on the popup");
-        chrome.storage.local.set({"onoff": response}, function(){
-            console.log("tab blocker is now" + response);
-        });
-    }
-    if (response == "off"){
-        try {
-            document.getElementById("selectedTime").disabled = false;
-            document.getElementById("focusModeStart").disabled = false;
-            document.getElementById("focusModeStart").style.filter = "saturate(100%)";
-            document.getElementById("focusModeStart").style.transform = "none";
-            document.getElementById("timerCircle").style.animation = "none";
-        } catch (error) {
-            console.log("error probably on wrong html page: " + error);
-        }
-    }else if (response == "on"){
-        try {
-            document.getElementById("focusModeStart").disabled = true;
-            document.getElementById("selectedTime").disabled = true;
-            document.getElementById("focusModeStart").style.filter = "saturate(10%)";
-            document.getElementById("focusModeStart").style.transform = "scale(0.9)";
-        } catch (error) {
-            console.log("error probably on wrong html page: " + error);
-        }
-    }
-});
 
-
-// Call this when the pop-up is shown to update the time displayed
-chrome.runtime.sendMessage({ cmd: 'GET_TIME' }, response => {
-    if (response.time) {
-        console.log("recieved time: ", response.time, " ---- now setting the time on the popup");
-        var countdownNumber = document.getElementById('countdown-number');
-        var timeSelected = (document.getElementById("selectedTime") != null ? (response.time) : 90);
-        countdownNumber ? (countdownNumber.textContent = formatTime(response.time)) : console.log("countdownNumber: ", countdownNumber);
-        chrome.storage.local.get(["onoff"], (result) => {
-            console.log("tab blocker is: " + result.onoff);
-            if (result.onoff == "on"){
-                startTimer(timeSelected);
-            }else{
-                console.log("tab blocker is: " + result.onoff);
-            }
-        });
-    }
-});
-
-//this listens for when the timer is finished
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.cmd === 'finished') {
-        document.getElementById("focusModeStart").disabled = false;
-        document.getElementById("selectedTime").disabled = false;
-        document.getElementById("focusModeStart").style.filter = "saturate(100%)";
-        document.getElementById("focusModeStart").style.transform = "none";
-        document.getElementById("timerCircle").style.setProperty("animation", "none");
-        console.log("request.cmd is finished and this is timerCircle: ", document.getElementById("timerCircle").style);
-        //turn off tab blocker
-        chrome.storage.local.set({"onoff": "off"}, function(){
-            console.log("tab blocker is now off line");
-        });
-    }else{
-        console.log("request.cmd is not finished idk why this is being called");
-    }
-});
-*/
 //blacklister timer functions
+loadOldBlacklistedSitesFromStorage();
 statusUpdate();
 updateTimer();
 listenForTimerEnd();
 
-
-
-
-
 //when all content on page is loaded
 document.addEventListener("DOMContentLoaded", function () {
+    //if the submit button is there, add event listener to it
     if (document.getElementById("submit") != null){
         document.getElementById("submit").onclick = formdata;
     }
+    //if the blsiteadder button is there, add event listener to it
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
     } 

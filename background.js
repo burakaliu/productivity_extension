@@ -9,6 +9,15 @@ chrome.action.onClicked.addListener(function(tab) {
   });
 });
 
+// This event is fired when the extension is first installed, updated, or Chrome is opened.
+// turn off the tab blocker when chrome is first opened
+chrome.runtime.onStartup.addListener(function() {
+  // Perform the one-time function here
+  chrome.storage.local.set({"onoff": "off"}, function(){
+    console.log("tab blocker is now" + "off");
+  }); 
+});
+
 
 
 
