@@ -18,10 +18,6 @@ listenForTimerEnd();
 
 //when all content on page is loaded
 document.addEventListener("DOMContentLoaded", function () {
-    //if the submit button is there, add event listener to it
-    if (document.getElementById("submit") != null){
-        document.getElementById("submit").onclick = formdata;
-    }
     //if the blsiteadder button is there, add event listener to it
     if (document.getElementById("blsiteadder") != null){
         document.getElementById("blsiteadder").onclick = formdata;
