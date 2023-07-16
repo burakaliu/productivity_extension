@@ -414,6 +414,7 @@ let data = new Promise((resolve, reject) => {
       }
   });
 });
+//why is every website being blocked
 console.log("data: ", data);
 data.then(limits => {
   console.log("limits: ", limits);
