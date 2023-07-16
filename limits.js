@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
     displayLimits();
 });
 
+document.getElementById("printStorage").onclick = function() {
+    chrome.storage.local.get(null, function(items) {
+        console.log('Chrome Storage Contents: ', items);
+    });
+}
+
 
 document.getElementById("limitsAdder").onclick = function() {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
@@ -25,7 +31,8 @@ function createNewLimit(url, time){
         name: url,
         time: time,
         url: url,
-        imageURL: getFaviconUrl(url)
+        imageURL: getFaviconUrl(url),
+        active: true
     };
     console.log("new limit: ", newLimit);
     return newLimit;
@@ -108,10 +115,10 @@ export function updateLimitInStorage(name, time, url){
 
 export function displayLimits(){
     getLimitsFromStorage().then(limits => {
-        console.log("limits: ", limits);
+        //console.log("limits: ", limits);
         if(limits.length > 0){
             for (const limit of limits){
-                console.log("limit: ", limit);
+                //console.log("limit: ", limit);
                 const limitElement = document.createElement("div");
                 const deleteIMG = document.createElement("img");
                 const editIMG = document.createElement("img");
@@ -132,5 +139,7 @@ export function clearAllLimits(){
         console.log("cleared all limits");
     });
 }
+
+
 
 

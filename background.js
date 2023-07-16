@@ -154,6 +154,77 @@ chrome.idle.onStateChanged.addListener(function (state) {
   }
 });
 
+//check wether any websites are past their time limit - needed for checkLimists()
+function getLimitsFromStorage(){
+  return new Promise((resolve, reject) => {
+      chrome.storage.sync.get(['limits'], function(result) {
+          console.log("result: ", result);
+          if(result.limits){
+              resolve(result.limits);
+          }else{
+              resolve([]);
+          }
+      });
+  });
+}
+
+function changeLimitStatus(name, status){
+  chrome.storage.sync.get(['limits'], function(result) {
+      console.log("result: ", result);
+      if(result.limits){
+          for (const limit of result.limits){
+              if(limit.name == name){
+                  limit.active = status;
+              }
+          }
+          chrome.storage.sync.set({limits: result.limits}, function() {
+              console.log("changed limit status");
+          });
+      }
+  });
+}
+
+
+function checkLimits(){
+  getLimitsFromStorage().then(limits => {
+      console.log("limits: ", limits);
+      if(limits.length > 0){
+          for (const limit of limits){
+              chrome.storage.local.get(null, function (data) {
+                  let totalTimeSpent = 0;
+                  for (let key in data) {
+                      if (key == getTodayDateString()) {
+                        console.log("key: ", key);
+                          for (let key2 in data[key]) {
+                            //console.log("limit name: ", limit.name, "key2: ", key2, " data[key][key2]: ", data[key][key2]);
+                            //totalTimeSpent += data[key][key2];
+                            if(key2 == limit.name &&  data[key][key2] > 100){
+                              console.log("limit reached");
+                              changeLimitStatus(limit.name, false);
+                              chrome.notifications.create('test', {
+                                  type: 'basic',
+                                  iconUrl: "/assets/ext-icon.png",
+                                  title: 'Time limit reached!',
+                                  message: `You have reached your time limit for ${limit.name}. You can take a break now!`,
+                                  priority: 2
+                              });
+                            }
+                          }
+                      }
+                  }
+                  console.log("total time spent: ", totalTimeSpent);
+                  
+              });
+          }
+      }else{
+          console.log("No limits set");
+      }
+  });
+}
+
+//check wether any websites are past their time limit
+checkLimits();
+
 
 function getTodayDateString(){
   const today = new Date();

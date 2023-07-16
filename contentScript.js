@@ -403,6 +403,34 @@ chrome.storage.local.get(["onoff"], (result) => {
         }
     });
 });
+
+let data = new Promise((resolve, reject) => {
+  chrome.storage.sync.get(['limits'], function(result) {
+      console.log("result: ", result);
+      if(result.limits){
+          resolve(result.limits);
+      }else{
+          resolve([]);
+      }
+  });
+});
+console.log("data: ", data);
+data.then(limits => {
+  console.log("limits: ", limits);
+  if(limits.length > 0){
+      for (const limit of limits){
+          console.log("limit: ", limit);
+          if (limit.active == false){
+            console.log("limit: ", limit.name, ": ", limit);
+            document.head.innerHTML = generateSTYLING();
+            document.body.innerHTML = generateHTML(limit.name);
+          }
+      }
+  }else{
+    console.log("limitnot over yet: ", limit.name, ": ", limit);
+      document.getElementById("limits").innerHTML = "No limits set";
+  }
+});
 /*
 //TERMPORARY CODE FOR BLOCKING ALL WEBSITES SELECTED IN THE LIST
 chrome.storage.local.get(["list"], (r) => {
