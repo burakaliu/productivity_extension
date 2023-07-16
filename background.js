@@ -221,7 +221,7 @@ function checkLimits(){
 }
 
 //check wether any websites are past their time limit
-setInterval(checkLimits, 1000);
+setInterval(checkLimits, 5000);
 
 function getTodayDateString(){
   const today = new Date();
