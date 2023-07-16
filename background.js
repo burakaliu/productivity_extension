@@ -158,7 +158,7 @@ chrome.idle.onStateChanged.addListener(function (state) {
 function getLimitsFromStorage(){
   return new Promise((resolve, reject) => {
       chrome.storage.sync.get(['limits'], function(result) {
-          console.log("result: ", result);
+          //console.log("result: ", result);
           if(result.limits){
               resolve(result.limits);
           }else{
@@ -170,7 +170,7 @@ function getLimitsFromStorage(){
 
 function changeLimitStatus(name, status){
   chrome.storage.sync.get(['limits'], function(result) {
-      console.log("result: ", result);
+      //console.log("result: ", result);
       if(result.limits){
           for (const limit of result.limits){
               if(limit.name == name){
@@ -178,7 +178,7 @@ function changeLimitStatus(name, status){
               }
           }
           chrome.storage.sync.set({limits: result.limits}, function() {
-              console.log("changed limit status");
+              //console.log("changed limit status");
           });
       }
   });
@@ -187,19 +187,19 @@ function changeLimitStatus(name, status){
 
 function checkLimits(){
   getLimitsFromStorage().then(limits => {
-      console.log("limits: ", limits);
+      //console.log("limits: ", limits);
       if(limits.length > 0){
           for (const limit of limits){
               chrome.storage.local.get(null, function (data) {
                   let totalTimeSpent = 0;
                   for (let key in data) {
                       if (key == getTodayDateString()) {
-                        console.log("key: ", key);
+                        //console.log("key: ", key);
                           for (let key2 in data[key]) {
-                            //console.log("limit name: ", limit.name, "key2: ", key2, " data[key][key2]: ", data[key][key2]);
+                            console.log("limit name: ", limit.name, "key2: ", key2, " data[key][key2]: ", data[key][key2]);
                             //totalTimeSpent += data[key][key2];
                             if(key2 == limit.name &&  data[key][key2] > 100){
-                              console.log("limit reached");
+                              //console.log("limit reached");
                               changeLimitStatus(limit.name, false);
                               chrome.notifications.create('test', {
                                   type: 'basic',
@@ -212,19 +212,16 @@ function checkLimits(){
                           }
                       }
                   }
-                  console.log("total time spent: ", totalTimeSpent);
-                  
               });
           }
       }else{
-          console.log("No limits set");
+          //console.log("No limits set");
       }
   });
 }
 
 //check wether any websites are past their time limit
-checkLimits();
-
+setInterval(checkLimits, 1000);
 
 function getTodayDateString(){
   const today = new Date();

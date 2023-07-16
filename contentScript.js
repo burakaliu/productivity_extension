@@ -406,7 +406,7 @@ chrome.storage.local.get(["onoff"], (result) => {
 
 let data = new Promise((resolve, reject) => {
   chrome.storage.sync.get(['limits'], function(result) {
-      console.log("result: ", result);
+      //console.log("result: ", result);
       if(result.limits){
           resolve(result.limits);
       }else{
@@ -415,21 +415,22 @@ let data = new Promise((resolve, reject) => {
   });
 });
 //why is every website being blocked
-console.log("data: ", data);
+//console.log("data: ", data);
 data.then(limits => {
-  console.log("limits: ", limits);
+  //console.log("limits: ", limits);
   if(limits.length > 0){
       for (const limit of limits){
-          console.log("limit: ", limit);
-          if (limit.active == false){
-            console.log("limit: ", limit.name, ": ", limit);
+          //console.log("limit: ", limit.name);
+          //console.log("page: ", getName(window.location.href));
+          if (limit.name == getName(window.location.href) && limit.active == false){
+            //console.log("limit: ", limit.name, ": ", limit);
             document.head.innerHTML = generateSTYLING();
             document.body.innerHTML = generateHTML(limit.name);
           }
       }
   }else{
-    console.log("limitnot over yet: ", limit.name, ": ", limit);
-      document.getElementById("limits").innerHTML = "No limits set";
+    //console.log("limitnot over yet: ", limit.name, ": ", limit);
+    document.getElementById("limits").innerHTML = "No limits set";
   }
 });
 /*
