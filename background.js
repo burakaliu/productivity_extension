@@ -126,6 +126,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             priority: 2
           });
           timerStatus = "off";
+
+          //create a session object
+          const session = {
+            startTime: endTime - message.duration * 1000,
+            endTime: endTime,
+          };
+
+          // add the finished session to the storage
+          chrome.storage.local.get("studySessions", function (data) {
+            let studySessions = data.studySessions || [];
+            studySessions.push(session);
+            chrome.storage.local.set({ studySessions });
+          });
+    
           sendResponse({ cmd: 'finished' });
           clearInterval(pomodoroID); 
       }
