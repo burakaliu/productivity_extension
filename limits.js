@@ -18,6 +18,7 @@ document.getElementById("limitsAdder").onclick = function() {
         console.log("from limits.js - current url: ", url);
         addLimitToStorage(getName(url), 6000, url);
     });
+    window.location.reload();
 }
 
 document.getElementById("limitsRemover").onclick = function() {
@@ -120,12 +121,37 @@ export function displayLimits(){
             for (const limit of limits){
                 //console.log("limit: ", limit);
                 const limitElement = document.createElement("div");
+                const limitTime = document.createElement("div");
                 const deleteIMG = document.createElement("img");
                 const editIMG = document.createElement("img");
 
                 limitElement.className = "limit";
-                limitElement.innerHTML = `<img src="${limit.imageURL}" class="limit-icon"><div class="limit-name">${limit.name}</div><div class="limit-time">${limit.time}</div>`;
+                //<img src="${limit.imageURL}" class="limit-icon">
+                //<div class="limit-time">${limit.time}</div>
+                limitElement.innerHTML = `<div class="limit-name">${limit.name}</div>`;
+                
+                limitTime.className = "limit-time";
+                limitTime.innerHTML = limit.time;
+                
+                deleteIMG.src = "/assets/delete.png";
+                deleteIMG.className = "delete-limit";
+                deleteIMG.onclick = function(){
+                    removeLimitFromStorage(limit.name, limit.time, limit.url);
+                    window.location.reload();
+                }
+        
+                editIMG.src = "/assets/edit.png";
+                editIMG.className = "edit-limit";
+                editIMG.onclick = function(){
+                    const newTime = prompt("Enter new time limit in seconds: ");
+                    updateLimitInStorage(limit.name, newTime, limit.url);
+                    window.location.reload();
+                }
                 document.getElementById("limits").appendChild(limitElement);
+                limitElement.appendChild(limitTime);
+                limitElement.appendChild(deleteIMG);
+                limitElement.appendChild(editIMG);
+                
             }
         }else{
             document.getElementById("limits").innerHTML = "No limits set";

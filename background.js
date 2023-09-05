@@ -131,14 +131,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     }, 1000);
   } else if (request.cmd === 'GET_TIME') {
-    console.log("getting time: ", pomodoroTime, " from background.js");
+    //console.log("getting time: ", pomodoroTime, " from background.js");
     if (pomodoroTime) {
       sendResponse({ time: pomodoroTime });
     }else{
       sendResponse({ time: 30*60 });
     }
   } else if(request.cmd === 'GET_STATUS'){
-    console.log("getting status: ", timerStatus, " from background.js");
+    //console.log("getting status: ", timerStatus, " from background.js");
     sendResponse(timerStatus);
   }
 });
@@ -196,10 +196,12 @@ function checkLimits(){
                       if (key == getTodayDateString()) {
                         //console.log("key: ", key);
                           for (let key2 in data[key]) {
-                            console.log("limit name: ", limit.name, "key2: ", key2, " data[key][key2]: ", data[key][key2]);
+                            //console.log("limit name: ", limit.name, "key2: ", key2, " data[key][key2]: ", data[key][key2]);
                             //totalTimeSpent += data[key][key2];
-                            if(key2 == limit.name &&  data[key][key2] > 100){
-                              //console.log("limit reached");
+                            //console.log(limit.time);
+                            //key2 == limit.name ? console.log(data[key][key2]) : console.log("not equal");
+                            if(key2 == limit.name &&  data[key][key2] > limit.time){
+                              console.log("limit reached");
                               changeLimitStatus(limit.name, false);
                               chrome.notifications.create('test', {
                                   type: 'basic',
@@ -221,7 +223,7 @@ function checkLimits(){
 }
 
 //check wether any websites are past their time limit
-setInterval(checkLimits, 5000);
+setInterval(checkLimits, 10000);
 
 function getTodayDateString(){
   const today = new Date();

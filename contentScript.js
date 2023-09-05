@@ -404,6 +404,7 @@ chrome.storage.local.get(["onoff"], (result) => {
     });
 });
 
+//LIMITS
 let data = new Promise((resolve, reject) => {
   chrome.storage.sync.get(['limits'], function(result) {
       //console.log("result: ", result);
@@ -414,7 +415,7 @@ let data = new Promise((resolve, reject) => {
       }
   });
 });
-//why is every website being blocked
+
 //console.log("data: ", data);
 data.then(limits => {
   //console.log("limits: ", limits);
