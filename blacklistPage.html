@@ -1,5 +1,12 @@
 <link href="popup.css" rel="stylesheet" type="text/css" />
 <script type="module" src="popup.js"></script>
+<script type="module" src="sessionTracker.js"></script>
+<script src="/node_modules/chart.js/dist/chart.umd.js"></script>
+<script src="/node_modules/chart.js"></script>
+<script src="node_modules\chart.js\dist\chart.umd.js"></script>
+<script src="/node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/Chart.min.js"></script>
+
 
 <div class="container">
     <div class="header"> 
@@ -24,6 +31,9 @@
               <img src="/assets/play.png" id="focusModeStart" alt="start" width="30" height="30">
               <label id="pomodoro-length-label" for="length">Length</label>
               <select name="time" id="selectedTime">
+                <option value="0.1">0.1</option>
+                <option value="1">1</option>
+                <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="30">30</option>
@@ -48,6 +58,9 @@
         
         <div class="blsites" id="blsites"></div>
       </div>
+    </div>
+    <div id="sessions-chart-container">
+      <canvas id="sessions-chart-canvas" width="400" height="400"></canvas>
     </div>
     
 </div>

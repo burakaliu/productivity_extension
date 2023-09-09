@@ -128,13 +128,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           timerStatus = "off";
 
           //create a session object
+          console.log("creating a session object with length: " + request.length);
           const session = {
-            startTime: endTime - message.duration * 1000,
-            endTime: endTime,
+            date: new Date().toJSON(),
+            length: request.length
           };
 
           // add the finished session to the storage
           chrome.storage.local.get("studySessions", function (data) {
+            console.log("get study session data: " + data);
             let studySessions = data.studySessions || [];
             studySessions.push(session);
             chrome.storage.local.set({ studySessions });

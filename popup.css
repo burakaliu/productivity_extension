@@ -4,7 +4,8 @@ a:visited, a:link{
 }
 
 .container {
-    width: 600px;
+    min-width: 600;
+    width: auto;
     height: auto;
     color: #314d3e;
     margin: 0px;

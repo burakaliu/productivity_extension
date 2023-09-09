@@ -431,7 +431,9 @@ data.then(limits => {
       }
   }else{
     //console.log("limitnot over yet: ", limit.name, ": ", limit);
-    document.getElementById("limits").innerHTML = "No limits set";
+    if (document.getElementById("limits")){
+      document.getElementById("limits").innerHTML = "No limits set";
+    }
   }
 });
 /*
