@@ -25,8 +25,21 @@ async function updateChart() {
   // Ensure that studySessionData is an object with a studySessions property
   if (studySessionData && Array.isArray(studySessionData.studySessions)) {
     // Create an array of dates for the week
-    const startDate = new Date(); // You can set your desired start date here
-    const endDate = new Date();   // You can set your desired end date here
+    // Get the current date
+    const currentDate = new Date();
+
+    // Calculate the first day (Sunday) of the current week
+    const startDate = new Date(currentDate);
+    startDate.setDate(currentDate.getDate() - currentDate.getDay());
+
+    // Calculate the last day (Saturday) of the current week
+    const endDate = new Date(currentDate);
+    endDate.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
+
+    // Display startDate and endDate
+    console.log('Start Date:', startDate.toISOString().split('T')[0]); // Format date as "YYYY-MM-DD"
+    console.log('End Date:', endDate.toISOString().split('T')[0]);     // Format date as "YYYY-MM-DD"
+
     const daysOfWeek = [];
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
       daysOfWeek.push(new Date(d));
@@ -35,8 +48,9 @@ async function updateChart() {
     // Extract the data you want to display on the chart
     const sessionDates = daysOfWeek.map(date => date.toISOString().split('T')[0]); // Format date as "YYYY-MM-DD"
     const sessionLengths = sessionDates.map(date => {
+      console.log(date);
       // Calculate total length for each date
-      const sessionsOnDate = studySessionData.studySessions.filter(session => session.date === date);
+      const sessionsOnDate = studySessionData.studySessions.filter(session => session.date.split('T')[0] === date);
       return sessionsOnDate.reduce((total, session) => total + session.length, 0);
     });
 
