@@ -7,8 +7,8 @@ function getStudySessionData() {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(['studySessions'], function (data) {
       console.log("result: ", data);
-      if (data.studySession) {
-        resolve(data.studySession);
+      if (data) {
+        resolve(data);
       } else {
         resolve([]);
       }
@@ -18,18 +18,43 @@ function getStudySessionData() {
       
 // Function to update the chart with study session data
 async function updateChart() {
+  console.log('Updating chart');
   const studySessionData = await getStudySessionData();
+  console.log(studySessionData);
 
-  // Extract the data you want to display on the chart
-  const sessionDates = studySessionData.map(session => session.date);
-  const sessionLengths = studySessionData.map(session => session.length);
+  // Ensure that studySessionData is an object with a studySessions property
+  if (studySessionData && Array.isArray(studySessionData.studySessions)) {
+    // Create an array of dates for the week
+    const startDate = new Date(); // You can set your desired start date here
+    const endDate = new Date();   // You can set your desired end date here
+    const daysOfWeek = [];
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      daysOfWeek.push(new Date(d));
+    }
 
-  // Update the chart data
-  window.weeklyChart.data.datasets[0].data = sessionLengths;
+    // Extract the data you want to display on the chart
+    const sessionDates = daysOfWeek.map(date => date.toISOString().split('T')[0]); // Format date as "YYYY-MM-DD"
+    const sessionLengths = sessionDates.map(date => {
+      // Calculate total length for each date
+      const sessionsOnDate = studySessionData.studySessions.filter(session => session.date === date);
+      return sessionsOnDate.reduce((total, session) => total + session.length, 0);
+    });
 
-  // Update any other chart settings or labels as needed
-  window.weeklyChart.update();
+    console.log(sessionDates);
+    console.log(sessionLengths);
+
+    // Update the chart data
+    window.weeklyChart.data.labels = sessionDates;
+    window.weeklyChart.data.datasets[0].data = sessionLengths;
+
+    // Update any other chart settings or labels as needed
+    window.weeklyChart.update();
+  } else {
+    console.error('Invalid study session data format.');
+  }
 }
+
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
