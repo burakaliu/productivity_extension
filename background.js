@@ -5,7 +5,7 @@
 chrome.action.onClicked.addListener(function(tab) {
   console.log("icon clicked");
   chrome.tabs.create({
-    url: "home.html"
+    url: "fullscreen.html"
   });
 });
 

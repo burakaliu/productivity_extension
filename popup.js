@@ -6,7 +6,7 @@ import {timerLogic, addNewBlacklistedSite, addOldBlacklistedSite, statusUpdate, 
 //open new tab page if the user clicks on home button
 if (document.getElementById("home") != null){
     document.getElementById("home").addEventListener("click", function(){
-        chrome.tabs.create({url: "popup.html"});
+        chrome.tabs.create({url: "fullscreen.html"});
     });
 }
 
@@ -85,7 +85,9 @@ function loadChartOfDay(day){
 
                 urlCell.textContent = tabRecord[0];
                 //grab official icon of site but if it does not exist, use default icon
-                icon.src = `https://www.${urlCell.textContent}/favicon.ico`;
+                //icon.src = `https://www.${urlCell.textContent}/favicon.ico`; chrome-extension://${chrome.runtime.id}/_favicon/
+                //icon.src = `chrome://favicon/https://${urlCell.textContent}/home`;
+                icon.src = `chrome-extension://${urlCell.textContent}/_favicon/`;
                 icon.addEventListener("error", () => {
                     icon.src = "/assets/default.png"; // replace with URL of default icon
                 });
